@@ -22,7 +22,7 @@ if(!require(shinydashboard)) install.packages("shinydashboard", repos = "http://
 source("configs.R")
 # source("helpers.R")
 source("prepara_dados.R")
-source("mapas/bairros_itajai.R")
+# source("mapas/bairros_itajai.R")
 
 ui = dashboardPage(
   dashboardHeader(title = "Itajaí | COVID-19"),
