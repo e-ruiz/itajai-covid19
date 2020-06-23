@@ -1,0 +1,197 @@
+#
+# Script que demonstra como ler os dados sobre COVID19
+#        diretamente da API do município de Itajaí-SC
+#
+#
+# @link: https://api.itajai.sc.gov.br/covid19
+# @author: Eric S. Lucinger Ruiz <ruiz.eric@itajai.sc.gov.br>[https://github.com/e-ruiz]
+# @version: 12-jun-2020
+#
+
+
+#
+# Se necessário instala dependências do repo oficial
+#
+# if(!require(maps)) install.packages("maps", repos = "http://cran.us.r-project.org")
+# if(!require(mapproj)) install.packages("mapproj", repos = "http://cran.us.r-project.org")
+if(!require(shiny)) install.packages("shiny", repos = "http://cran.us.r-project.org")
+# # if(!require(shinyWidgets)) install.packages("shinyWidgets", repos = "http://cran.us.r-project.org")
+if(!require(shinydashboard)) install.packages("shinydashboard", repos = "http://cran.us.r-project.org")
+# if(!require(shinythemes)) install.packages("shinythemes", repos = "http://cran.us.r-project.org")
+
+source("configs.R")
+# source("helpers.R")
+source("prepara_dados.R")
+source("mapas/bairros_itajai.R")
+
+ui = dashboardPage(
+  dashboardHeader(title = "Itajaí | COVID-19"),
+  skin = "yellow",  
+
+  dashboardSidebar(
+    sidebarMenu(
+      menuItem("Geral", tabName = "geral", icon = icon("dashboard")),
+      menuItem("Confirmados", icon = icon("exclamation-triangle"),
+        menuSubItem("Geral", tabName = "confirmados"),
+        menuSubItem("Mapa", tabName = "confirmados-mapa")
+      ),
+      menuItem("Mortes", tabName = "mortes", icon = icon("sad-tear")),
+      menuItem("Predições", tabName = "predicoes", icon = icon("search")),
+      menuItem("Sobre", tabName = "sobre", icon = icon("info"))
+    )
+  ),
+
+  dashboardBody(
+    tabItems(
+
+      # Painel 1
+      tabItem(tabName = 'geral',
+        # Boxes need to be put in a row (or column)
+        fluidRow(
+          valueBox(width = 3, 10 * 2, "Confirmados", 
+              color = "orange", icon = icon("exclamation-triangle")),
+          valueBox(width = 3, 10 * 2, "Mortes", 
+              color = "maroon", icon = icon("sad-tear")),
+          valueBox(width = 3, 10 * 2, "Curados", 
+              color = "green", icon = icon("thumbs-up")),
+          valueBox(width = 3, 10 * 2, "Ativos", 
+              color = "purple", icon = icon("search")),
+          
+          
+          box(
+            title = "Evolução dos casos",
+            width = 12,
+            status = 'primary', solidHeader = TRUE,
+            h3("Gráfico de linha"),
+            p("Série temporal")
+          ),
+
+          box(
+            title = "Novos casos por período",
+            width = 12,
+            status = 'primary', solidHeader = TRUE,            
+            h3("Gráfico de barras"),
+            p("Série temporal")
+          ),
+          
+        )
+      ), # Painel 1
+
+
+      # Painel 2
+      tabItem(tabName = 'confirmados',
+
+        box(
+          title = "Casos confirmados",
+          width = 12,
+          status = 'warning', solidHeader = TRUE,
+          tabBox(
+            title = "",
+            id = "tab-confirmados", 
+            width = 12,
+            height = "350px",
+            tabPanel("Por gênero", "Gráfico de barras/pizza dos casos confirmados por gênero"),
+            tabPanel("Faixa etária", "Gráfico de barras dos casos confirmados por faixa etária"),
+            tabPanel("Idade", "Gráfico de barras dos casos confirmados por idade"),
+            tabPanel("Por bairro", "Gráfico dos casos confirmados por bairro")
+          ),
+        )
+      ), # Painel 2
+
+
+      # Painel 3
+      tabItem(tabName = "confirmados-mapa",
+        box(
+          title = "Mapa | Confirmados por bairro",
+          width = 12,
+          status = 'warning', solidHeader = TRUE,            
+          h3("Mapa de casos confirmados por bairro"),
+          p("Mapa")
+        )
+      ), # Painel 3
+
+
+      # Painel 4
+      tabItem(tabName = "mortes",
+       box(
+            title = "Evolução dos casos",
+            width = 12,
+            status = 'primary', solidHeader = TRUE,
+            h3("Gráfico de linha"),
+            p("Série temporal")
+        ),
+        box(
+          title = "Casos mortes",
+          width = 12,
+          # background = "maroon",
+          status = 'danger', solidHeader = TRUE,
+          tabBox(
+            title = "",
+            id = "tab-mortes", 
+            width = 12,
+            height = "250px",
+            tabPanel("Por gênero", 
+                "Gráfico de barras/pizza dos casos de mortes por gênero"),
+            tabPanel("Faixa etária", "Gráfico de barras dos casos de mortes por faixa etária"),
+            tabPanel("Idade", "Gráfico de barras dos casos de mortes por idade")
+          )
+        )
+      ), # Painel 4
+
+
+      # Painel 5
+      tabItem(tabName = "predicoes",
+        box(
+          title = "Predições",
+          width = 12,
+          status = 'primary', solidHeader = TRUE,            
+          h3("Predição de contágio"),
+          p("Gráfico")
+        ),
+      ), # Painel 5
+
+
+
+      # Painel 6
+      tabItem(tabName = "sobre",
+        box(
+          # title = "",
+          width = 12,
+          # status = 'primary', solidHeader = TRUE,            
+          h2("Sobre"),
+          p("Dados sobre a motivação, elaboração do trabalho"),
+          hr(),
+
+          h2("Fontes de dados"),
+          p("Especificação dos dados, fonte, etc."),
+          hr(),
+
+          h2("Tecnologias e licenças"),
+          p("Dados sobre tecnologias aplicadas (R, Shiny, etc.) e suas licenças"),
+          hr(),
+
+          h2("Autores"),
+          p("Dados dos autores"),
+          hr(),
+
+          h2("Repositório"),
+          a("https://github.com/e-ruiz/itajai-covid19", 
+            href="https://github.com/e-ruiz/itajai-covid19"), 
+          hr()
+        )
+      ) # Painel 6
+    )
+  )
+)
+
+server = function(input, output) {
+  set.seed(122)
+  histdata = rnorm(500)
+
+  output$plot1 = renderPlot({
+    data = histdata[seq_len(input$slider)]
+    hist(data)
+  })
+}
+
+shinyApp(ui = ui, server = server)

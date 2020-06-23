@@ -1,0 +1,11 @@
+.vscode
+*~
+
+.RData
+.Rhistory
+
+/dados
+/mapas
+
+rsconnect
+configs.R
