@@ -7,8 +7,7 @@ Esse projeto é um trabalho em conjunto dos alunos de pós graduação em Big Da
 
 1. Faça o clone desse repositório, ex.: 
 ```bash
-$ git clone https://git@github.com/e-ruiz/itajai-covid19.git 
-$ cd itajai-covid19
+$ git clone https://github.com/e-ruiz/itajai-covid19 && cd itajai-covid19
 ```
 
 2. Configure o arquivo `configs.R` conforme suas necessidades;
