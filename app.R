@@ -36,7 +36,7 @@ ui = dashboardPage(
         menuSubItem("Geral", tabName = "confirmados"),
         menuSubItem("Mapa", tabName = "confirmados-mapa")
       ),
-      menuItem("Mortes", tabName = "mortes", icon = icon("sad-tear")),
+      menuItem("Óbitos", tabName = "obitos", icon = icon("exclamation")),
       menuItem("Predições", tabName = "predicoes", icon = icon("search")),
       menuItem("Sobre", tabName = "sobre", icon = icon("info"))
     )
@@ -51,8 +51,8 @@ ui = dashboardPage(
         fluidRow(
           valueBox(width = 3, 10 * 2, "Confirmados", 
               color = "orange", icon = icon("exclamation-triangle")),
-          valueBox(width = 3, 10 * 2, "Mortes", 
-              color = "maroon", icon = icon("sad-tear")),
+          valueBox(width = 3, 10 * 2, "Óbitos", 
+              color = "maroon", icon = icon("exclamation")),
           valueBox(width = 3, 10 * 2, "Curados", 
               color = "green", icon = icon("thumbs-up")),
           valueBox(width = 3, 10 * 2, "Ativos", 
@@ -114,7 +114,7 @@ ui = dashboardPage(
 
 
       # Painel 4
-      tabItem(tabName = "mortes",
+      tabItem(tabName = "obitos",
         box(
           title = "Evolução dos casos",
           width = 12,
@@ -123,19 +123,19 @@ ui = dashboardPage(
           p("Série temporal")
         ),
         box(
-          title = "Casos mortes",
+          title = "Casos óbitos",
           width = 12,
           # background = "maroon",
           status = 'danger', solidHeader = TRUE,
           tabBox(
             title = "",
-            id = "tab-mortes", 
+            id = "tab-obitos", 
             width = 12,
             height = "250px",
             tabPanel("Por gênero", 
-                "Gráfico de barras/pizza dos casos de mortes por gênero"),
-            tabPanel("Faixa etária", "Gráfico de barras dos casos de mortes por faixa etária"),
-            tabPanel("Idade", "Gráfico de barras dos casos de mortes por idade")
+                "Gráfico de barras/pizza dos casos de óbitos por gênero"),
+            tabPanel("Faixa etária", "Gráfico de barras dos casos de óbitos por faixa etária"),
+            tabPanel("Idade", "Gráfico de barras dos casos de óbitos por idade")
           )
         )
       ), # Painel 4
