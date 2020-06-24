@@ -14,6 +14,7 @@
 #
 # if(!require(maps)) install.packages("maps", repos = "http://cran.us.r-project.org")
 # if(!require(mapproj)) install.packages("mapproj", repos = "http://cran.us.r-project.org")
+if(!require(leaflet)) install.packages("leaflet", repos = "http://cran.us.r-project.org")
 if(!require(shiny)) install.packages("shiny", repos = "http://cran.us.r-project.org")
 # # if(!require(shinyWidgets)) install.packages("shinyWidgets", repos = "http://cran.us.r-project.org")
 if(!require(shinydashboard)) install.packages("shinydashboard", repos = "http://cran.us.r-project.org")
@@ -22,7 +23,7 @@ if(!require(shinydashboard)) install.packages("shinydashboard", repos = "http://
 source("configs.R")
 # source("helpers.R")
 source("prepara_dados.R")
-source("mapas/bairros_itajai.R")
+# source("mapas/bairros_itajai.R")
 
 ui = dashboardPage(
   dashboardHeader(title = "Itajaí | COVID-19"),
@@ -100,25 +101,26 @@ ui = dashboardPage(
 
 
       # Painel 3
-      tabItem(tabName = "confirmados-mapa",
+      tabItem(
+        tabName = "confirmados-mapa",
         box(
-          title = "Mapa | Confirmados por bairro",
+          title = "Mapa casos confirmados",
           width = 12,
-          status = 'warning', solidHeader = TRUE,            
-          h3("Mapa de casos confirmados por bairro"),
-          p("Mapa")
+          # status = 'primary', solidHeader = TRUE,
+          # h3("Gráfico de linha"),
+          leafletOutput("map1", height = "400px")
         )
       ), # Painel 3
 
 
       # Painel 4
       tabItem(tabName = "mortes",
-       box(
-            title = "Evolução dos casos",
-            width = 12,
-            status = 'primary', solidHeader = TRUE,
-            h3("Gráfico de linha"),
-            p("Série temporal")
+        box(
+          title = "Evolução dos casos",
+          width = 12,
+          status = 'primary', solidHeader = TRUE,
+          h3("Gráfico de linha"),
+          p("Série temporal")
         ),
         box(
           title = "Casos mortes",
@@ -185,13 +187,55 @@ ui = dashboardPage(
 )
 
 server = function(input, output) {
-  set.seed(122)
-  histdata = rnorm(500)
+  # set.seed(122)
+  # histdata = rnorm(500)
 
-  output$plot1 = renderPlot({
-    data = histdata[seq_len(input$slider)]
-    hist(data)
+  # output$plot1 = renderPlot({
+  #   data = histdata[seq_len(input$slider)]
+  #   hist(data)
+  # })
+
+  # 
+  # Casos confirmados por bairro
+  # Fonte: GeoJSON API Itajaí
+  # 
+  bins <- c(0, 10, 20, 50, 100, 200, Inf)
+  pal <- colorBin("YlOrRd", domain = confirmados_bairro$confirmados, bins = bins)
+
+  output$map1 <- renderLeaflet({
+    leaflet(confirmados_bairro) %>%
+      setView(lat = -26.95, lng = -48.7, zoom = 11) %>%
+      addProviderTiles(providers$CartoDB.Positron) %>%
+      # addTiles() %>%
+      addPolygons(
+        fillColor = ~pal(confirmados),
+        weight = 1,
+        opacity = 1,
+        color = "#444",
+        stroke = TRUE,
+        dashArray = 1, 
+        fillOpacity = .6,
+        # smoothFactor = 0.3, 
+        label = ~paste0(bairro, ": ", confirmados ),
+        highlight = highlightOptions(
+          weight = 5,
+          color = "#446",
+          dashArray = "",
+          fillOpacity = 1,
+          bringToFront = TRUE)
+      )
+      # addLegend(pal = pal, values = ~log10(pop), opacity = 1.0,
+      #   labFormat = labelFormat(transform = function(x) round(10^x)))
   })
+
+  # output$map1 <- renderLeaflet({
+  #   leaflet() %>% 
+  #     # addProviderTiles("Stamen.Watercolor") %>% 
+  #       setView(lng = -100, lat = 50, zoom = 2) %>%
+  #       addTiles()
+
+  #   })
+
 }
 
 shinyApp(ui = ui, server = server)

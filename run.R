@@ -10,4 +10,4 @@
 
 if(!require(shiny)) install.packages("shiny", repos = "http://cran.us.r-project.org")
 
-runApp()
+runApp(port = 4321)

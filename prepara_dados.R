@@ -14,7 +14,7 @@
 #
 # if(!require(ggplot2)) install.packages("ggplot2", repos = "http://cran.us.r-project.org")
 if(!require(jsonlite)) install.packages("jsonlite", repos = "http://cran.us.r-project.org")
-# if(!require(rgdal)) install.packages("rgdal", repos = "http://cran.us.r-project.org")
+if(!require(rgdal)) install.packages("rgdal", repos = "http://cran.us.r-project.org")
 if(!require(lubridate)) install.packages("rgdal", repos = "http://cran.us.r-project.org")
 if(!require(dplyr)) install.packages("dplyr", repos = "http://cran.us.r-project.org")
 # if(!require(hrbrthemes)) install.packages("hrbrthemes", repos = "http://cran.us.r-project.org")
@@ -30,14 +30,16 @@ source("configs.R")
 # bairros = readOGR("dados/itajai_bairros2.shp")
 
 #
-# busca os dados na API de Itajaí
+# Prepara os links para busca dos dados na API de Itajaí
 #
 json_confirmados = paste("https://api.itajai.sc.gov.br/covid19/confirmados?token=", sep = "", api_itajai_token)
 json_mortes = paste("https://api.itajai.sc.gov.br/covid19/mortes?token=", sep = "", api_itajai_token)
 json_boletins = paste("https://api.itajai.sc.gov.br/covid19/boletins?token=", sep = "", api_itajai_token)
+geojson_confirmados_bairro = paste("https://api.itajai.sc.gov.br/covid19/confirmados_bairros?token=", sep = "", api_itajai_token)
 
 # importa dados do JSON
 confirmados = fromJSON(json_confirmados)
+confirmados_bairro = rgdal::readOGR(geojson_confirmados_bairro)
 mortes = fromJSON(json_mortes)
 boletins = fromJSON(json_boletins)
 
