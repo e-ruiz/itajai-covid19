@@ -201,7 +201,7 @@ server = function(input, output) {
         easyClose = TRUE,
         footer = NULL,
         img(src="https://intranet2.itajai.sc.gov.br/public/corona-virus/imagens/output.png",
-          width="400px"
+          width="360px"
         )
       )
     )
