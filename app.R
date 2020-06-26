@@ -19,6 +19,8 @@ if(!require(shiny)) install.packages("shiny", repos = "http://cran.us.r-project.
 # # if(!require(shinyWidgets)) install.packages("shinyWidgets", repos = "http://cran.us.r-project.org")
 if(!require(shinydashboard)) install.packages("shinydashboard", repos = "http://cran.us.r-project.org")
 # if(!require(shinythemes)) install.packages("shinythemes", repos = "http://cran.us.r-project.org")
+if(!require(ggplot2)) install.packages("ggplot2", repos = "http://cran.us.r-project.org")
+if(!require(plotly)) install.packages("plotly", repos = "http://cran.us.r-project.org")
 
 source("configs.R")
 # source("helpers.R")
@@ -26,15 +28,9 @@ source("prepara_dados.R")
 # source("mapas/bairros_itajai.R")
 
 ui = dashboardPage(
+  dashboardHeader(title = "Itajaí | COVID-19"),
   skin = "yellow",  
-  dashboardHeader(
-    title = "Itajaí | COVID-19",
-    tags$li(actionLink("openModal", label = "", icon = icon("file-alt")),
-      class = "dropdown"
-    )
-  ),
 
-  
   dashboardSidebar(
     sidebarMenu(
       menuItem("Geral", tabName = "geral", icon = icon("dashboard")),
@@ -55,13 +51,17 @@ ui = dashboardPage(
       tabItem(tabName = 'geral',
         # Boxes need to be put in a row (or column)
         fluidRow(
-          valueBox(width = 3, 10 * 2, "Confirmados", 
+          valueBox(width = 3, boletins$confirmados_acumulados[boletins$data == max(boletins$data)], "Confirmados", 
               color = "orange", icon = icon("exclamation-triangle")),
-          valueBox(width = 3, 10 * 2, "Óbitos", 
+          valueBox(width = 3, boletins$mortes_acumuladas[boletins$data == max(boletins$data)], "Óbitos", 
               color = "maroon", icon = icon("exclamation")),
-          valueBox(width = 3, 10 * 2, "Curados", 
+          valueBox(width = 3, boletins$curados[boletins$data == max(boletins$data)], "Curados", 
               color = "green", icon = icon("thumbs-up")),
-          valueBox(width = 3, 10 * 2, "Ativos", 
+          valueBox(width = 3, 
+                   (boletins$confirmados_acumulados[boletins$data == max(boletins$data)]
+                   -boletins$mortes_acumuladas[boletins$data == max(boletins$data)]
+                   -boletins$curados[boletins$data == max(boletins$data)])
+                   , "Ativos", 
               color = "purple", icon = icon("search")),
           
           
@@ -69,16 +69,19 @@ ui = dashboardPage(
             title = "Evolução dos casos",
             width = 12,
             status = 'primary', solidHeader = TRUE,
-            h3("Gráfico de linha"),
-            p("Série temporal")
+            h3("Evolução dos casos confirmados no tempo"),
+            #p("Série temporal")
+            plotlyOutput("casos_evolucao", height = 180)
           ),
 
           box(
-            title = "Novos casos por período",
+            #title = "Novos casos por período",
+            title = "Casos Ativos por período",
             width = 12,
             status = 'primary', solidHeader = TRUE,            
-            h3("Gráfico de barras"),
-            p("Série temporal")
+            h3("Evolução dos casos ativos no tempo"),
+            #p("Série temporal")
+            plotlyOutput("casos_ativos", height = 180)
           ),
           
         )
@@ -125,8 +128,9 @@ ui = dashboardPage(
           title = "Evolução dos casos",
           width = 12,
           status = 'primary', solidHeader = TRUE,
-          h3("Gráfico de linha"),
-          p("Série temporal")
+          h3("Evolução dos Óbitos no tempo"),
+          #p("Série temporal"),
+          plotlyOutput("obitos_evolucao", height = 180)
         ),
         box(
           title = "Casos óbitos",
@@ -139,7 +143,8 @@ ui = dashboardPage(
             width = 12,
             height = "250px",
             tabPanel("Por gênero", 
-                "Gráfico de barras/pizza dos casos de óbitos por gênero"),
+                #"Gráfico de barras/pizza dos casos de óbitos por gênero",
+                plotlyOutput("obitos_genero", height = 200)),
             tabPanel("Faixa etária", "Gráfico de barras dos casos de óbitos por faixa etária"),
             tabPanel("Idade", "Gráfico de barras dos casos de óbitos por idade")
           )
@@ -193,19 +198,13 @@ ui = dashboardPage(
 )
 
 server = function(input, output) {
-  # modal dialog
-  observeEvent(input$openModal, {
-    showModal(
-      modalDialog(
-        title = "Boletim epidemiológico",
-        easyClose = TRUE,
-        footer = NULL,
-        img(src="https://intranet2.itajai.sc.gov.br/public/corona-virus/imagens/output.png",
-          width="360px"
-        )
-      )
-    )
-  })
+  # set.seed(122)
+  # histdata = rnorm(500)
+
+  # output$plot1 = renderPlot({
+  #   data = histdata[seq_len(input$slider)]
+  #   hist(data)
+  # })
 
   # 
   # Casos confirmados por bairro
@@ -247,7 +246,80 @@ server = function(input, output) {
   #       addTiles()
 
   #   })
+  ################################################
+  # Evolução dos óbitos
+  # Grafico - serie tempora - mortes no periodo
+  ################################################
+  output$obitos_evolucao <- renderPlotly({
+#    ggplot(data = boletins,
+#                  aes(x = ymd(data), y = mortes_acumuladas, label = mortes_acumuladas)) +
+#      geom_line(colour = "#97a0bd") +
+#      geom_point(pch = 21, colour = "#97a0bd", fill = "#97a0bd", size = 1,
+#                 alpha = 0.8) +
+#      ## geom_text(nudge_y = 20) +
+#      #facet_wrap(~ city, ncol = 2, scales = "free_y") +
+#      labs(x = "Dias", y = "óbitos") +
+#      scale_x_date(breaks = "10 days") +
+#      theme_gray(base_size = 16)
+    pObitos <- plot_ly(boletins,x = ~ymd(data), y = ~mortes_acumuladas,
+                         type='scatter',mode='lines')
+    pObitos <- pObitos %>% layout(xaxis=list(title='Período'),yaxis=list(title='Óbitos'))
+    pObitos
+    
+  })
+  
+  ################################################
+  # Evolução dos casos confirmados
+  # Grafico - serie temporal - caos no periodo
+  ################################################
+  output$casos_evolucao <- renderPlotly({
+    #ggplot(data = boletins,
+    #       aes(x = ymd(data), y = confirmados_acumulados, label = confirmados_acumulados)) +
+    #  geom_line(colour = "#97a0bd") +
+    #  geom_point(pch = 21, colour = "#97a0bd", fill = "#97a0bd", size = 1,
+    #             alpha = 0.8) +
+    #  ## geom_text(nudge_y = 20) +
+    #  #facet_wrap(~ city, ncol = 2, scales = "free_y") +
+    #  labs(x = "Dias", y = "Casos Confirmados") +
+    #  scale_x_date(breaks = "10 days") +
+    #  theme_gray(base_size = 16)
+    
+    pEvolucao <- plot_ly(boletins,x = ~ymd(data), y = ~confirmados_acumulados,
+                      type='scatter',mode='lines')
+    pEvolucao <- pEvolucao %>% layout(xaxis=list(title='Período'),yaxis=list(title='Casos Confirmados'))
+    pEvolucao
+    
+    
+  })
+  
+  ################################################
+  # óbitos por genero
+  # Grafico - pizza - mortes por genero
+  ################################################
+  output$obitos_genero <- renderPlotly({
+    #plot_ly(
+    #  x=(aggregate(mortes$sexo,by=list(mortes$sexo),FUN=length))$Group.1,
+    #  y=(aggregate(mortes$sexo,by=list(mortes$sexo),FUN=length))$x,
+    #  name="Mortes por Gênero",type="bar")
+    plot_ly(count(mortes,sexo),labels = ~sexo,values= ~n,type='pie')
+  })    
 
+  ################################################
+  # óbitos por genero
+  # Grafico - pizza - mortes por genero
+  ################################################
+  output$casos_ativos <- renderPlotly({
+    #plot_ly(
+    #  x=(aggregate(mortes$sexo,by=list(mortes$sexo),FUN=length))$Group.1,
+    #  y=(aggregate(mortes$sexo,by=list(mortes$sexo),FUN=length))$x,
+    #  name="Mortes por Gênero",type="bar")
+    #plot_ly(count(mortes,sexo),labels = ~sexo,values= ~n,type='pie')
+    pAtivos <- plot_ly(boletins,x = ~ymd(data), y = ~(confirmados_acumulados-mortes_acumuladas-curados),
+            type = 'bar') #type='scatter',mode='lines')
+    pAtivos <- pAtivos %>% layout(xaxis=list(title='Período'),yaxis=list(title='Casos Ativos'))
+    pAtivos
+  })    
+  
 }
 
 shinyApp(ui = ui, server = server)
