@@ -30,13 +30,15 @@ source('predicao_confirmados.R')
 
 
 ui = dashboardPage(
-  skin = "yellow",
-  
+  skin = "yellow",  
   dashboardHeader(
     title = "Itajaí | COVID-19",
-    tags$li(actionLink("openModal", label = "", icon = icon("file-alt")),
+    tags$li(
+      actionLink("openModal", 
+      label = strong(paste0(" Atualizado em ", DATA_ULTIMO_BOLETIM, " - ", APP_VERSION)), 
+      icon = icon("file-alt")),
       class = "dropdown"
-    )
+    )    
   ),
 
   dashboardSidebar(

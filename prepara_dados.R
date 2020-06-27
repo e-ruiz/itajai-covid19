@@ -43,6 +43,10 @@ confirmados_bairro = rgdal::readOGR(geojson_confirmados_bairro)
 mortes = fromJSON(json_mortes)
 boletins = fromJSON(json_boletins)
 
+
+DATA_ULTIMO_BOLETIM = format(as.Date(max(confirmados$data)), "%d/%m/%Y")
+
+
 # ordena boletins por data decrescente
 # boletins <- boletins[order(data),]
 
