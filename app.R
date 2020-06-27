@@ -26,6 +26,8 @@ source("configs.R")
 # source("helpers.R")
 source("prepara_dados.R")
 # source("mapas/bairros_itajai.R")
+source('predicao_confirmados.R')
+
 
 ui = dashboardPage(
   skin = "yellow",
@@ -169,11 +171,12 @@ ui = dashboardPage(
       # Painel 5
       tabItem(tabName = "predicoes",
         box(
-          title = "Predições",
+          title = "Predição de Casos",
           width = 12,
-          status = 'primary', solidHeader = TRUE,            
-          h3("Predição de contágio"),
-          p("Gráfico")
+          status = 'primary', solidHeader = TRUE,
+          h3("Proximos 10 dias"),
+          #p("Série temporal")
+          plotlyOutput("predicao10dias", height = 300)
         ),
       ), # Painel 5
 
@@ -375,8 +378,20 @@ server = function(input, output) {
             type = 'bar') #type='scatter',mode='lines')
     pAtivos <- pAtivos %>% layout(xaxis=list(title='Período'),yaxis=list(title='Casos Ativos'))
     pAtivos
-  })    
+  })
+
+  output$predicao10dias <- renderPlotly({
+    pPredicao <- plot_ly(mat.pred,x = ~ date, y = ~Pred.m,type='scatter',mode='lines',name='Previsto')
+    pPredicao <- pPredicao %>% add_trace(x = ~ date, y = ~Upr,type='scatter',mode='lines',name='Max Previsto')
+    pPredicao <- pPredicao %>% add_trace(x = ~ date, y = ~Lwr,type='scatter',mode='lines',name='Min Previsto')
+    pPredicao <- pPredicao %>% add_trace( x = ~ df$data, y = ~df$confirmados_acumulados,type='scatter',mode='lines',name='Confirmados')
+    
+    pPredicao <- pPredicao %>% layout(xaxis=list(title='Período'),yaxis=list(title='Casos'))
+    pPredicao
+  })  
   
 }
+
+
 
 shinyApp(ui = ui, server = server)
