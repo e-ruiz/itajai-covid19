@@ -28,8 +28,14 @@ source("prepara_dados.R")
 # source("mapas/bairros_itajai.R")
 
 ui = dashboardPage(
-  dashboardHeader(title = "Itajaí | COVID-19"),
-  skin = "yellow",  
+  skin = "yellow",
+  
+  dashboardHeader(
+    title = "Itajaí | COVID-19",
+    tags$li(actionLink("openModal", label = "", icon = icon("file-alt")),
+      class = "dropdown"
+    )
+  ),
 
   dashboardSidebar(
     sidebarMenu(
@@ -198,13 +204,19 @@ ui = dashboardPage(
 )
 
 server = function(input, output) {
-  # set.seed(122)
-  # histdata = rnorm(500)
-
-  # output$plot1 = renderPlot({
-  #   data = histdata[seq_len(input$slider)]
-  #   hist(data)
-  # })
+  # modal dialog com a img do boletim oficial
+  observeEvent(input$openModal, {
+    showModal(
+      modalDialog(
+        title = "Boletim epidemiológico",
+        easyClose = TRUE,
+        footer = NULL,
+        img(src="https://intranet2.itajai.sc.gov.br/public/corona-virus/imagens/output.png",
+          width="360px"
+        )
+      )
+    )
+  })
 
   # 
   # Casos confirmados por bairro
