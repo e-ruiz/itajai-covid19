@@ -54,8 +54,17 @@ pPredicao <- pPredicao %>% layout(xaxis=list(title='Período'),yaxis=list(title=
 pPredicao
 
 #Cria a tabela de predição
-tblPredicao <- data.frame("Data" = mat.pred$date, 
-                          "Confirmados" = mat.pred$Pred.m, 
+tblMat <- data.frame("Data" = mat.pred$date,
                           "Preditos" = mat.pred$Pred.m,
+                          "Erro.Percentual" = 0,
                           "Mínimo" = mat.pred$Lwr,
                           "Máximo" = mat.pred$Upr)
+
+tblOriginal <- data.frame("Data" = df$data,
+                          "Confirmados" = df$confirmados_acumulados)
+
+tblPredicao <- merge(x = tblOriginal, y = tblMat)
+
+tblPredicao$Erro.Percentual = abs((tblPredicao$Confirmados - tblPredicao$Preditos) / tblPredicao$Confirmados)
+
+
