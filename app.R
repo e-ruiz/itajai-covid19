@@ -100,10 +100,16 @@ ui = dashboardPage(
             id = "tab-confirmados", 
             width = 12,
             height = "350px",
-            tabPanel("Por gênero", "Gráfico de barras/pizza dos casos confirmados por gênero"),
-            tabPanel("Faixa etária", "Gráfico de barras dos casos confirmados por faixa etária"),
-            tabPanel("Idade", "Gráfico de barras dos casos confirmados por idade"),
-            tabPanel("Por bairro", "Gráfico dos casos confirmados por bairro")
+            tabPanel("Por gênero", 
+                     #"Gráfico de barras/pizza dos casos confirmados por gênero"),
+                     plotlyOutput("confimados_genero", height = 250)),
+            #tabPanel("Faixa etária", "Gráfico de barras dos casos confirmados por faixa etária"),
+            tabPanel("Idade", 
+                     #"Gráfico de barras dos casos confirmados por idade"),
+                     plotlyOutput("confirmados_idade",height = 250)),
+            tabPanel("Por bairro", 
+                     #"Gráfico dos casos confirmados por bairro")
+                     plotlyOutput("confirmados_bairros",height = 250))
           ),
         )
       ), # Painel 2
@@ -145,8 +151,10 @@ ui = dashboardPage(
             tabPanel("Por gênero", 
                 #"Gráfico de barras/pizza dos casos de óbitos por gênero",
                 plotlyOutput("obitos_genero", height = 200)),
-            tabPanel("Faixa etária", "Gráfico de barras dos casos de óbitos por faixa etária"),
-            tabPanel("Idade", "Gráfico de barras dos casos de óbitos por idade")
+            #tabPanel("Faixa etária", "Gráfico de barras dos casos de óbitos por faixa etária"),
+            tabPanel("Idade", 
+                     #"Gráfico de barras dos casos de óbitos por idade")
+                plotlyOutput("obitos_idade",height = 200))
           )
         )
       ), # Painel 4
@@ -291,7 +299,33 @@ server = function(input, output) {
     
     
   })
+ 
+  ################################################
+  # Evolução dos Casos confirmados por Idade
+  # Grafico - Barras - Casos confirmados por Idade
+  ################################################
+  output$confirmados_idade <- renderPlotly({
+    pIdade <- plot_ly(count(confirmados,idade),x = ~idade, y = ~n,type='bar')
+    pIdade <- pIdade %>% layout(xaxis=list(title='Idade'),yaxis=list(title='Casos Confirmados'))
+    pIdade
+  })
   
+  ################################################
+  # Evolução dos Casos confirmados por bairro
+  # Grafico - Barras - Casos confirmados por bairro
+  ################################################
+  output$confirmados_bairros <- renderPlotly({
+    pBairro <- plot_ly(count(confirmados,bairro),x = ~bairro, y = ~n,type='bar')
+    pBairro <- pBairro %>% layout(xaxis=list(title='Bairros'),yaxis=list(title='Casos Confirmados'))
+    pBairro
+  })
+  ################################################
+  # Confirmados por genero
+  # Grafico - pizza - Confirmados por genero
+  ################################################
+  output$confimados_genero <- renderPlotly({
+      plot_ly(count(confirmados,sexo),labels = ~sexo,values= ~n,type='pie')
+  }) 
   ################################################
   # óbitos por genero
   # Grafico - pizza - mortes por genero
@@ -305,8 +339,19 @@ server = function(input, output) {
   })    
 
   ################################################
-  # óbitos por genero
-  # Grafico - pizza - mortes por genero
+  # Evolução dos öbitos por Idade
+  # Grafico - Barras - öbitos por Idade
+  ################################################
+  output$obitos_idade <- renderPlotly({
+    pObitosIdade <- plot_ly(count(mortes,idade),x = ~idade, y = ~n,type='bar')
+    pObitosIdade <- pObitosIdade %>% layout(xaxis=list(title='Idade'),yaxis=list(title='Óbitos'))
+    pObitosIdade
+  })
+  
+  
+  ################################################
+  # Evolução casos Ativos
+  # Grafico - Barras - Casos Ativos
   ################################################
   output$casos_ativos <- renderPlotly({
     #plot_ly(
