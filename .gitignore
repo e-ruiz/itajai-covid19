@@ -10,4 +10,5 @@
 rsconnect
 configs.R
 .Rproj.user
-/nbproject/private/
+*.Rproj
+/nbproject
