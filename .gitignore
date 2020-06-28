@@ -9,3 +9,6 @@
 
 rsconnect
 configs.R
+.Rproj.user
+*.Rproj
+/nbproject

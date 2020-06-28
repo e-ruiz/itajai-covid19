@@ -21,13 +21,13 @@ if(!require(shinydashboard)) install.packages("shinydashboard", repos = "http://
 # if(!require(shinythemes)) install.packages("shinythemes", repos = "http://cran.us.r-project.org")
 if(!require(ggplot2)) install.packages("ggplot2", repos = "http://cran.us.r-project.org")
 if(!require(plotly)) install.packages("plotly", repos = "http://cran.us.r-project.org")
+if(!require(nlstools)) install.packages("nlstools", repos = "http://cran.us.r-project.org")
+if(!require(DT)) install.packages("DT", repos = "http://cran.us.r-project.org")
 
 source("configs.R")
 # source("helpers.R")
 source("prepara_dados.R")
 # source("mapas/bairros_itajai.R")
-source('predicao_confirmados.R')
-
 
 DATA_ULTIMO_BOLETIM = format(as.Date(max(boletins$data)), "%d/%m/%Y")
 
@@ -50,18 +50,21 @@ ui = dashboardPage(
     sidebarMenu(
       menuItem("Geral", tabName = "geral", icon = icon("dashboard")),
       menuItem("Confirmados", icon = icon("exclamation-triangle"),
-        menuSubItem("Geral", tabName = "confirmados"),
-        menuSubItem("Mapa", tabName = "confirmados-mapa")
+               menuSubItem("Geral", tabName = "confirmados"),
+               menuSubItem("Mapa", tabName = "confirmados-mapa")
       ),
       menuItem("Óbitos", tabName = "obitos", icon = icon("exclamation")),
-      menuItem("Predições", tabName = "predicoes", icon = icon("search")),
+      menuItem("Predições", icon = icon("search"),
+               menuSubItem("Gráfico de predição", tabName = "predicoes"),
+               menuSubItem("Tabela de predição", tabName = "predicoes-tabela")
+      ),
       menuItem("Sobre", tabName = "sobre", icon = icon("info"))
     )
   ),
-
+  
   dashboardBody(
     tabItems(
-
+      
       # Painel 1
       tabItem(tabName = 'geral',
         # Boxes need to be put in a row (or column)
@@ -101,8 +104,8 @@ ui = dashboardPage(
           
         )
       ), # Painel 1
-
-
+      
+      
       # Painel 2
       tabItem(tabName = 'confirmados',
 
@@ -135,8 +138,8 @@ ui = dashboardPage(
           ),
         )
       ), # Painel 2
-
-
+      
+      
       # Painel 3
       tabItem(
         tabName = "confirmados-mapa",
@@ -155,8 +158,8 @@ ui = dashboardPage(
           leafletOutput("map1")
         )
       ), # Painel 3
-
-
+      
+      
       # Painel 4
       tabItem(tabName = "obitos",
         box(
@@ -186,54 +189,61 @@ ui = dashboardPage(
           )
         )
       ), # Painel 4
-
-
+      
+      
       # Painel 5
       tabItem(tabName = "predicoes",
         box(
           title = "",
+          width = 12,
           span(
-            h2(tags$i(class="fa fa-search", style="color:rgba(0,0,0,0.15); margin-right:16px"), 
+            h2(tags$i(class = "fa fa-search", style = "color:rgba(0,0,0,0.15); margin-right:16px"), 
               # span("", style="font-weight:normal"), 
               "Predição de casos",
-              style="width:66.666%; margin:-24px 0px 32px -24px;font-weight:bold; color:white; background-color:gray; padding:14px 32px;"), 
+              style = "width:66.666%; margin:-24px 0px 32px -24px;font-weight:bold; color:white; background-color:gray; padding:14px 32px;"), 
           ),
-          p("Próximos 10 dias", style="font-style:italic"),
-          # title = span(
-          #   h2("Predição de casos", style="margin-top:10px;font-weight:bold"), 
-          #   p("Próximos 10 dias", style="font-style:italic")),
-          width = 12,
-          # status = 'primary', solidHeader = TRUE,
-          # h3("Proximos 10 dias"),
-          #p("Série temporal")
+          p("Próximos 10 dias", style = "font-style:italic"),
           plotlyOutput("predicao10dias")
         ),
       ), # Painel 5
+      
 
-
-
+      # Painel Tabela de Predições
+      tabItem(tabName = "predicoes-tabela",
+        box(
+          width = 12,
+          title = "",
+          span(
+            h2(tags$i(class = "fa fa-search", style = "color:rgba(0,0,0,0.15); margin-right:16px"), 
+              "Predição de casos",
+              style = "width:66.666%; margin:-24px 0px 32px -24px;font-weight:bold; color:white; background-color:gray; padding:14px 32px;"), 
+          ),
+          p("Próximos 10 dias", style = "font-style:italic"),
+          DT::dataTableOutput("tabelaPredicao")
+        ),
+      ), # Painel 5
+      
       # Painel 6
       tabItem(tabName = "sobre",
         box(
           # title = "",
           width = 12,
-          # status = 'primary', solidHeader = TRUE,            
           h2("Sobre"),
           p("Dados sobre a motivação, elaboração do trabalho"),
           hr(),
-
+          
           h2("Fontes de dados"),
           p("Especificação dos dados, fonte, etc."),
           hr(),
-
+          
           h2("Tecnologias e licenças"),
           p("Dados sobre tecnologias aplicadas (R, Shiny, etc.) e suas licenças"),
           hr(),
-
+          
           h2("Autores"),
           p("Dados dos autores"),
           hr(),
-
+          
           h2("Repositório"),
           a("https://github.com/e-ruiz/itajai-covid19", 
             href="https://github.com/e-ruiz/itajai-covid19"), 
@@ -249,7 +259,12 @@ server = function(input, output) {
   observeEvent(input$openModal, {
     showModal(
       modalDialog(
-        title = "Boletim epidemiológico",
+        title = "",
+          span(
+            h2(tags$i(class = "fa fa-file-out", style = "color:rgba(0,0,0,0.15); margin-right:16px"), 
+              "Boletim epidemiológico",
+              style = "width:66%; margin:-24px 0px 32px -24px;font-weight:bold; color:white; background-color:orange; padding:14px 32px;"), 
+          ),
         easyClose = TRUE,
         footer = NULL,
         img(src="https://intranet2.itajai.sc.gov.br/public/corona-virus/imagens/output.png",
@@ -258,14 +273,14 @@ server = function(input, output) {
       )
     )
   })
-
+  
   # 
   # Casos confirmados por bairro
   # Fonte: GeoJSON API Itajaí
   # 
   bins <- c(0, 10, 20, 50, 100, 200, Inf)
   pal <- colorBin("YlOrRd", domain = confirmados_bairro$confirmados, bins = bins)
-
+  
   output$map1 <- renderLeaflet({
     leaflet(confirmados_bairro) %>%
       setView(lat = -26.95, lng = -48.7, zoom = 11) %>%
@@ -288,16 +303,16 @@ server = function(input, output) {
           fillOpacity = 1,
           bringToFront = TRUE)
       )
-      # addLegend(pal = pal, values = ~log10(pop), opacity = 1.0,
-      #   labFormat = labelFormat(transform = function(x) round(10^x)))
+    # addLegend(pal = pal, values = ~log10(pop), opacity = 1.0,
+    #   labFormat = labelFormat(transform = function(x) round(10^x)))
   })
-
+  
   # output$map1 <- renderLeaflet({
   #   leaflet() %>% 
   #     # addProviderTiles("Stamen.Watercolor") %>% 
   #       setView(lng = -100, lat = 50, zoom = 2) %>%
   #       addTiles()
-
+  
   #   })
   ################################################
   # Evolução dos óbitos
@@ -319,7 +334,7 @@ server = function(input, output) {
         line = list(color = '#d81b60', width = 2)
     )
     pObitos <- pObitos %>% layout(xaxis=list(title='Período'),yaxis=list(title='Óbitos'))
-    pObitos
+    # pObitos
     
   })
   
@@ -344,11 +359,10 @@ server = function(input, output) {
         line = list(color = "#ff851b")
     )
     pEvolucao <- pEvolucao %>% layout(xaxis=list(title='Período'),yaxis=list(title='Casos Confirmados'))
-    pEvolucao
-    
-    
+    # pEvolucao
   })
- 
+  
+
   ################################################
   # Evolução dos Casos confirmados por Idade
   # Grafico - Barras - Casos confirmados por Idade
@@ -358,9 +372,10 @@ server = function(input, output) {
       marker = list(color = "#ff851b")
     )
     pIdade <- pIdade %>% layout(xaxis=list(title='Idade'),yaxis=list(title='Casos Confirmados'))
-    pIdade
+    # pIdade
   })
   
+
   ################################################
   # Evolução dos Casos confirmados por bairro
   # Grafico - Barras - Casos confirmados por bairro
@@ -370,8 +385,10 @@ server = function(input, output) {
       marker = list(color = "#ff851b")
     )
     pBairro <- pBairro %>% layout(xaxis=list(title='Bairros'),yaxis=list(title='Casos Confirmados'))
-    pBairro
+    # pBairro
   })
+
+
   ################################################
   # Confirmados por genero
   # Grafico - pizza - Confirmados por genero
@@ -380,7 +397,9 @@ server = function(input, output) {
     plot_ly(count(confirmados,sexo), labels = ~sexo, values = ~n, type = 'pie',
       marker = list(colors = c("rgb(255, 148, 32)", "rgb(241, 113, 0)"))
     )
-  }) 
+  })
+
+
   ################################################
   # óbitos por genero
   # Grafico - pizza - mortes por genero
@@ -394,6 +413,7 @@ server = function(input, output) {
       marker = list(colors = c("pink", "#d81b60"), width = 2)
     )
   })    
+  
 
   ################################################
   # Evolução dos öbitos por Idade
@@ -404,7 +424,7 @@ server = function(input, output) {
       marker = list(color = '#d81b60', width = 2)
     )
     pObitosIdade <- pObitosIdade %>% layout(xaxis=list(title='Idade'),yaxis=list(title='Óbitos'))
-    pObitosIdade
+    # pObitosIdade
   })
   
   
@@ -423,19 +443,14 @@ server = function(input, output) {
         marker = list(color = "#605ca8")
     )
     pAtivos <- pAtivos %>% layout(xaxis=list(title='Período'),yaxis=list(title='Casos Ativos'))
-    pAtivos
-  })
+    # pAtivos
+  })   
+  
 
   output$predicao10dias <- renderPlotly({
     ##
     # Check for tricks: https://stackoverflow.com/questions/46730394/r-set-plotly-hovermode-to-compare-data-on-hover
     #
-    # pPredicao <- plot_ly(mat.pred,x = ~ date, y = ~Pred.m,type='scatter',mode='lines',name='Previsto')
-    # pPredicao <- pPredicao %>% add_trace(x = ~ date, y = ~Upr,type='scatter',mode='lines',name='Max Previsto')
-    # pPredicao <- pPredicao %>% add_trace(x = ~ date, y = ~Lwr,type='scatter',mode='lines',name='Min Previsto')
-    # pPredicao <- pPredicao %>% add_trace( x = ~ df$data, y = ~df$confirmados_acumulados,type='scatter',mode='lines',name='Confirmados')
-    # pPredicao <- pPredicao %>% layout(xaxis=list(title='Período'),yaxis=list(title='Casos'))
-    # pPredicao
 
     # Linha Lwr, intervalo de conviança 95% inferior
     pPredicao <- plot_ly(mat.pred, x = ~ date, y = ~Lwr, name = 'I.C.Inf 95%', 
@@ -470,10 +485,19 @@ server = function(input, output) {
           #legend=list(x=1,y=0.5)
           )
     pPredicao
-  })  
+  }) 
+
+
+  source("predicao_confirmados.R")
+  # output$predicao10dias <- renderPlotly(pPredicao)
   
+  DT::renderDT({
+    datatable(iris) %>% formatStyle(
+      'Sepal.Width',
+      backgroundColor = styleInterval(3.4, c('gray', 'yellow'))
+    )
+  }) 
+  output$tabelaPredicao = DT::renderDataTable(tblPredicao)
 }
-
-
 
 shinyApp(ui = ui, server = server)
