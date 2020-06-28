@@ -33,7 +33,7 @@ DATA_ULTIMO_BOLETIM = format(as.Date(max(boletins$data)), "%d/%m/%Y")
 
 
 ui = dashboardPage(
-  skin = "yellow",
+  skin = "green",
   
   dashboardHeader(
     title = "Itajaí | COVID-19",
@@ -81,20 +81,20 @@ ui = dashboardPage(
           
           
           box(
-            title = "Evolução dos casos",
+            title = "Evolução dos casos confirmados",
             width = 12,
-            status = 'primary', solidHeader = TRUE,
-            h3("Evolução dos casos confirmados no tempo"),
+            # status = 'primary', solidHeader = TRUE,
+            # h3("Evolução dos casos confirmados no tempo"),
             #p("Série temporal")
             plotlyOutput("casos_evolucao", height = 180)
           ),
 
           box(
             #title = "Novos casos por período",
-            title = "Casos Ativos por período",
+            title = "Casos ativos por período",
             width = 12,
-            status = 'primary', solidHeader = TRUE,            
-            h3("Evolução dos casos ativos no tempo"),
+            # status = 'primary', solidHeader = TRUE,
+            # h3("Evolução dos casos ativos no tempo"),
             #p("Série temporal")
             plotlyOutput("casos_ativos", height = 180)
           ),
@@ -107,24 +107,31 @@ ui = dashboardPage(
       tabItem(tabName = 'confirmados',
 
         box(
-          title = "Casos confirmados",
+          title = "",
+          span(
+            h2(tags$i(class="fa fa-exclamation-triangle", style="color:rgba(0,0,0,0.15); margin-right:16px"), 
+              boletins$confirmados_acumulados[boletins$data == max(boletins$data)], 
+              span(" Confirmados", style="font-weight:normal"), 
+              style="width:66.666%; margin:-24px 0px 32px -24px;font-weight:bold; color:white; background-color:#ff851b; padding:14px 32px;"),
+          ),
+          # h3("Confirmados por bairro", style="font-weight:bold; font-size:30px; margin:32px 0 16px 0"),
           width = 12,
-          status = 'warning', solidHeader = TRUE,
+          # status = 'warning', solidHeader = TRUE,
           tabBox(
             title = "",
             id = "tab-confirmados", 
             width = 12,
-            height = "350px",
+            # height = "350px",
             tabPanel("Por gênero", 
                      #"Gráfico de barras/pizza dos casos confirmados por gênero"),
-                     plotlyOutput("confimados_genero", height = 250)),
+                     plotlyOutput("confimados_genero")),
             #tabPanel("Faixa etária", "Gráfico de barras dos casos confirmados por faixa etária"),
-            tabPanel("Idade", 
+            tabPanel("Por idade", 
                      #"Gráfico de barras dos casos confirmados por idade"),
-                     plotlyOutput("confirmados_idade",height = 250)),
+                     plotlyOutput("confirmados_idade")),
             tabPanel("Por bairro", 
                      #"Gráfico dos casos confirmados por bairro")
-                     plotlyOutput("confirmados_bairros",height = 250))
+                     plotlyOutput("confirmados_bairros"))
           ),
         )
       ), # Painel 2
@@ -134,11 +141,18 @@ ui = dashboardPage(
       tabItem(
         tabName = "confirmados-mapa",
         box(
-          title = "Mapa casos confirmados",
+          title = "",
+          span(
+            h2(tags$i(class="fa fa-exclamation-triangle", style="color:rgba(0,0,0,0.15); margin-right:16px"), 
+              boletins$confirmados_acumulados[boletins$data == max(boletins$data)], 
+              span(" Confirmados", style="font-weight:normal"), 
+              style="width:66.666%; margin:-24px 0px 32px -24px;font-weight:bold; color:white; background-color:#ff851b; padding:14px 32px;"),
+          ),
+          h3("Confirmados por bairro", style="font-weight:bold; font-size:30px; margin:32px 0 16px 0"),
           width = 12,
           # status = 'primary', solidHeader = TRUE,
           # h3("Gráfico de linha"),
-          leafletOutput("map1", height = "400px")
+          leafletOutput("map1")
         )
       ), # Painel 3
 
@@ -146,30 +160,29 @@ ui = dashboardPage(
       # Painel 4
       tabItem(tabName = "obitos",
         box(
-          title = "Evolução dos casos",
-          width = 12,
-          status = 'primary', solidHeader = TRUE,
-          h3("Evolução dos Óbitos no tempo"),
-          #p("Série temporal"),
-          plotlyOutput("obitos_evolucao", height = 180)
-        ),
-        box(
-          title = "Casos óbitos",
+          title = "",
+          span(
+            h2(tags$i(class="fa fa-exclamation", style="color:rgba(0,0,0,0.15); margin-right:16px"), 
+              boletins$mortes_acumuladas[boletins$data == max(boletins$data)], 
+              span(" Óbitos", style="font-weight:normal"), 
+              style="width:66.666%; margin:-24px 0px 32px -24px;font-weight:bold; color:white; background-color:#d81b60; padding:14px 32px;"), 
+          ),
           width = 12,
           # background = "maroon",
-          status = 'danger', solidHeader = TRUE,
+          # status = 'danger', solidHeader = TRUE,
           tabBox(
             title = "",
             id = "tab-obitos", 
             width = 12,
-            height = "250px",
+            tabPanel("Linha do tempo",
+              plotlyOutput("obitos_evolucao")
+            ),
             tabPanel("Por gênero", 
-                #"Gráfico de barras/pizza dos casos de óbitos por gênero",
-                plotlyOutput("obitos_genero", height = 200)),
-            #tabPanel("Faixa etária", "Gráfico de barras dos casos de óbitos por faixa etária"),
-            tabPanel("Idade", 
-                     #"Gráfico de barras dos casos de óbitos por idade")
-                plotlyOutput("obitos_idade",height = 200))
+                plotlyOutput("obitos_genero")
+            ),
+            tabPanel("Por idade", 
+                plotlyOutput("obitos_idade")
+            )
           )
         )
       ), # Painel 4
@@ -178,12 +191,22 @@ ui = dashboardPage(
       # Painel 5
       tabItem(tabName = "predicoes",
         box(
-          title = "Predição de Casos",
+          title = "",
+          span(
+            h2(tags$i(class="fa fa-search", style="color:rgba(0,0,0,0.15); margin-right:16px"), 
+              # span("", style="font-weight:normal"), 
+              "Predição de casos",
+              style="width:66.666%; margin:-24px 0px 32px -24px;font-weight:bold; color:white; background-color:gray; padding:14px 32px;"), 
+          ),
+          p("Próximos 10 dias", style="font-style:italic"),
+          # title = span(
+          #   h2("Predição de casos", style="margin-top:10px;font-weight:bold"), 
+          #   p("Próximos 10 dias", style="font-style:italic")),
           width = 12,
-          status = 'primary', solidHeader = TRUE,
-          h3("Proximos 10 dias"),
+          # status = 'primary', solidHeader = TRUE,
+          # h3("Proximos 10 dias"),
           #p("Série temporal")
-          plotlyOutput("predicao10dias", height = 300)
+          plotlyOutput("predicao10dias")
         ),
       ), # Painel 5
 
@@ -291,8 +314,10 @@ server = function(input, output) {
 #      labs(x = "Dias", y = "óbitos") +
 #      scale_x_date(breaks = "10 days") +
 #      theme_gray(base_size = 16)
-    pObitos <- plot_ly(boletins,x = ~ymd(data), y = ~mortes_acumuladas,
-                         type='scatter',mode='lines')
+    pObitos <- plot_ly(boletins, x = ~ymd(data), y = ~mortes_acumuladas,
+        type = 'scatter', mode = 'lines',
+        line = list(color = '#d81b60', width = 2)
+    )
     pObitos <- pObitos %>% layout(xaxis=list(title='Período'),yaxis=list(title='Óbitos'))
     pObitos
     
@@ -315,7 +340,9 @@ server = function(input, output) {
     #  theme_gray(base_size = 16)
     
     pEvolucao <- plot_ly(boletins,x = ~ymd(data), y = ~confirmados_acumulados,
-                      type='scatter',mode='lines')
+        type = 'scatter', mode = 'lines',
+        line = list(color = "#ff851b")
+    )
     pEvolucao <- pEvolucao %>% layout(xaxis=list(title='Período'),yaxis=list(title='Casos Confirmados'))
     pEvolucao
     
@@ -327,7 +354,9 @@ server = function(input, output) {
   # Grafico - Barras - Casos confirmados por Idade
   ################################################
   output$confirmados_idade <- renderPlotly({
-    pIdade <- plot_ly(count(confirmados,idade),x = ~idade, y = ~n,type='bar')
+    pIdade <- plot_ly(count(confirmados,idade), x = ~idade, y = ~n, type = 'bar',
+      marker = list(color = "#ff851b")
+    )
     pIdade <- pIdade %>% layout(xaxis=list(title='Idade'),yaxis=list(title='Casos Confirmados'))
     pIdade
   })
@@ -337,7 +366,9 @@ server = function(input, output) {
   # Grafico - Barras - Casos confirmados por bairro
   ################################################
   output$confirmados_bairros <- renderPlotly({
-    pBairro <- plot_ly(count(confirmados,bairro),x = ~bairro, y = ~n,type='bar')
+    pBairro <- plot_ly(count(confirmados,bairro),x = ~bairro, y = ~n,type='bar',
+      marker = list(color = "#ff851b")
+    )
     pBairro <- pBairro %>% layout(xaxis=list(title='Bairros'),yaxis=list(title='Casos Confirmados'))
     pBairro
   })
@@ -346,7 +377,9 @@ server = function(input, output) {
   # Grafico - pizza - Confirmados por genero
   ################################################
   output$confimados_genero <- renderPlotly({
-      plot_ly(count(confirmados,sexo),labels = ~sexo,values= ~n,type='pie')
+    plot_ly(count(confirmados,sexo), labels = ~sexo, values = ~n, type = 'pie',
+      marker = list(colors = c("rgb(255, 148, 32)", "rgb(241, 113, 0)"))
+    )
   }) 
   ################################################
   # óbitos por genero
@@ -357,7 +390,9 @@ server = function(input, output) {
     #  x=(aggregate(mortes$sexo,by=list(mortes$sexo),FUN=length))$Group.1,
     #  y=(aggregate(mortes$sexo,by=list(mortes$sexo),FUN=length))$x,
     #  name="Mortes por Gênero",type="bar")
-    plot_ly(count(mortes,sexo),labels = ~sexo,values= ~n,type='pie')
+    plot_ly(count(mortes, sexo), labels = ~sexo, values = ~n, type = 'pie',
+      marker = list(colors = c("pink", "#d81b60"), width = 2)
+    )
   })    
 
   ################################################
@@ -365,7 +400,9 @@ server = function(input, output) {
   # Grafico - Barras - öbitos por Idade
   ################################################
   output$obitos_idade <- renderPlotly({
-    pObitosIdade <- plot_ly(count(mortes,idade),x = ~idade, y = ~n,type='bar')
+    pObitosIdade <- plot_ly(count(mortes,idade), x = ~idade, y = ~n, type = 'bar',
+      marker = list(color = '#d81b60', width = 2)
+    )
     pObitosIdade <- pObitosIdade %>% layout(xaxis=list(title='Idade'),yaxis=list(title='Óbitos'))
     pObitosIdade
   })
@@ -381,19 +418,57 @@ server = function(input, output) {
     #  y=(aggregate(mortes$sexo,by=list(mortes$sexo),FUN=length))$x,
     #  name="Mortes por Gênero",type="bar")
     #plot_ly(count(mortes,sexo),labels = ~sexo,values= ~n,type='pie')
-    pAtivos <- plot_ly(boletins,x = ~ymd(data), y = ~(confirmados_acumulados-mortes_acumuladas-curados),
-            type = 'bar') #type='scatter',mode='lines')
+    pAtivos <- plot_ly(boletins, x = ~ymd(data), y = ~(confirmados_acumulados-mortes_acumuladas-curados),
+        type = 'bar',
+        marker = list(color = "#605ca8")
+    )
     pAtivos <- pAtivos %>% layout(xaxis=list(title='Período'),yaxis=list(title='Casos Ativos'))
     pAtivos
   })
 
   output$predicao10dias <- renderPlotly({
-    pPredicao <- plot_ly(mat.pred,x = ~ date, y = ~Pred.m,type='scatter',mode='lines',name='Previsto')
-    pPredicao <- pPredicao %>% add_trace(x = ~ date, y = ~Upr,type='scatter',mode='lines',name='Max Previsto')
-    pPredicao <- pPredicao %>% add_trace(x = ~ date, y = ~Lwr,type='scatter',mode='lines',name='Min Previsto')
-    pPredicao <- pPredicao %>% add_trace( x = ~ df$data, y = ~df$confirmados_acumulados,type='scatter',mode='lines',name='Confirmados')
+    ##
+    # Check for tricks: https://stackoverflow.com/questions/46730394/r-set-plotly-hovermode-to-compare-data-on-hover
+    #
+    # pPredicao <- plot_ly(mat.pred,x = ~ date, y = ~Pred.m,type='scatter',mode='lines',name='Previsto')
+    # pPredicao <- pPredicao %>% add_trace(x = ~ date, y = ~Upr,type='scatter',mode='lines',name='Max Previsto')
+    # pPredicao <- pPredicao %>% add_trace(x = ~ date, y = ~Lwr,type='scatter',mode='lines',name='Min Previsto')
+    # pPredicao <- pPredicao %>% add_trace( x = ~ df$data, y = ~df$confirmados_acumulados,type='scatter',mode='lines',name='Confirmados')
+    # pPredicao <- pPredicao %>% layout(xaxis=list(title='Período'),yaxis=list(title='Casos'))
+    # pPredicao
+
+    # Linha Lwr, intervalo de conviança 95% inferior
+    pPredicao <- plot_ly(mat.pred, x = ~ date, y = ~Lwr, name = 'I.C.Inf 95%', 
+        type = 'scatter', mode='lines',
+          # config(
+          #   spikemode = 'across'
+          # ),
+        #,fill = 'none', fillcolor='rgba(220,220,220,0.2)',
+        line = list(color = 'rgb(212,212,212)',dash = 'dash',width = 3))
     
-    pPredicao <- pPredicao %>% layout(xaxis=list(title='Período'),yaxis=list(title='Casos'))
+    # Linha Pred.m, valor predito
+    pPredicao <- pPredicao %>% add_trace(x = ~ date, y = ~Pred.m, name = 'Predito',
+        fill = 'tonexty', fillcolor = 'rgba(200,200,200,0.2)',
+        line = list(color = 'rgb(152,152,152)', width = 4))
+    
+    # Linha Upr, intervalo de confiança 95% superior
+    pPredicao <- pPredicao %>% add_trace(x = ~ date, y = ~Upr, name = 'I.C.Sup 95%',
+        fill = 'tonexty', fillcolor = 'rgba(200,200,200,0.2)',
+        line = list(color = 'rgb(192,192,192'))
+    
+    # Linha Confirmados acumulados
+    pPredicao <- pPredicao %>% add_trace(x = ~ df$data, y = ~df$confirmados_acumulados, name='Confirmados',
+        fill = 'none', line = list(color='orange', dash='solid'))
+    
+    # Linha 
+    pPredicao <- pPredicao %>% layout(
+          xaxis=list(title=paste0('Período\nRelação Predito x Observado: ',
+                                  as.character(round(cor(df$confirmados_acumulados, df$Pred.m), 4)))
+                     ),
+          yaxis=list(title='Casos'),
+          hovermode = 'compare'
+          #legend=list(x=1,y=0.5)
+          )
     pPredicao
   })  
   
