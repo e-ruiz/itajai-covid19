@@ -29,12 +29,19 @@ source("prepara_dados.R")
 source('predicao_confirmados.R')
 
 
+DATA_ULTIMO_BOLETIM = format(as.Date(max(boletins$data)), "%d/%m/%Y")
+
+
 ui = dashboardPage(
   skin = "yellow",
   
   dashboardHeader(
     title = "Itajaí | COVID-19",
-    tags$li(actionLink("openModal", label = "", icon = icon("file-alt")),
+    tags$li(
+      actionLink("openModal", 
+        label = strong(paste0("Boletim de ", DATA_ULTIMO_BOLETIM, " - [ ", APP_VERSION, " ]")),
+        icon = icon("file-alt")
+      ),
       class = "dropdown"
     )
   ),
