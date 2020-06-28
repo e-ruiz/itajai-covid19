@@ -65,6 +65,6 @@ tblOriginal <- data.frame("Data" = df$data,
 
 tblPredicao <- merge(x = tblOriginal, y = tblMat)
 
-tblPredicao$Erro.Percentual = abs((tblPredicao$Confirmados - tblPredicao$Preditos) / tblPredicao$Confirmados)
+tblPredicao$Erro.Percentual = round(abs((tblPredicao$Confirmados - tblPredicao$Preditos) / tblPredicao$Confirmados),2)
 
 
