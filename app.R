@@ -128,7 +128,8 @@ ui = dashboardPage(
             tabPanel("Por gênero", 
                      #"Gráfico de barras/pizza dos casos confirmados por gênero"),
                      plotlyOutput("confimados_genero")),
-            #tabPanel("Faixa etária", "Gráfico de barras dos casos confirmados por faixa etária"),
+            tabPanel("Faixa etária", #"Gráfico de barras dos casos confirmados por faixa etária"),
+                     plotlyOutput("confirmados_faixa_etaria")),
             tabPanel("Por idade", 
                      #"Gráfico de barras dos casos confirmados por idade"),
                      plotlyOutput("confirmados_idade")),
@@ -180,10 +181,13 @@ ui = dashboardPage(
             tabPanel("Linha do tempo",
               plotlyOutput("obitos_evolucao")
             ),
-            tabPanel("Por gênero", 
+            tabPanel("Por Gênero", 
                 plotlyOutput("obitos_genero")
             ),
-            tabPanel("Por idade", 
+            tabPanel("Por Faixa Etária",
+                plotlyOutput("obitos_faixa_etaria")
+            ),
+            tabPanel("Por Idade", 
                 plotlyOutput("obitos_idade")
             )
           )
@@ -398,6 +402,19 @@ server = function(input, output) {
       marker = list(colors = c("rgb(255, 148, 32)", "rgb(241, 113, 0)"))
     )
   })
+  
+  
+  ################################################
+  # Confirmados por Faixa Etária
+  # Grafico - barras - Confirmados por Faixa Etária
+  ################################################
+  output$confirmados_faixa_etaria <- renderPlotly({
+    pConfFaixaEtaria <- plot_ly(count(confirmados,faixa_etaria),x = ~faixa_etaria, y = ~n,marker = list(color = 'ff851b') ,type='bar')
+    pConfFaixaEtaria <- pConfFaixaEtaria %>% layout(xaxis=list(title='Faixa Etária'),yaxis=list(title='Casos Confirmados'))
+    pConfFaixaEtaria
+    
+  })
+  
 
 
   ################################################
@@ -414,7 +431,16 @@ server = function(input, output) {
     )
   })    
   
-
+  ################################################
+  # Obitos por Faixa Etária
+  # Grafico - barras - Obitos por Faixa Etária
+  ################################################
+  output$obitos_faixa_etaria <- renderPlotly({
+    pObitosFaixaEtaria <- plot_ly(count(mortes,faixa_etaria),x = ~faixa_etaria, y = ~n,marker = list(color = 'd81b60') ,type='bar')
+    pObitosFaixaEtaria <- pObitosFaixaEtaria %>% layout(xaxis=list(title='Faixa Etária'),yaxis=list(title='Óbitos'))
+    pObitosFaixaEtaria
+   })
+  
   ################################################
   # Evolução dos öbitos por Idade
   # Grafico - Barras - öbitos por Idade
