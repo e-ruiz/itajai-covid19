@@ -43,6 +43,88 @@ confirmados_bairro = rgdal::readOGR(geojson_confirmados_bairro)
 mortes = fromJSON(json_mortes)
 boletins = fromJSON(json_boletins)
 
+# Inclui a coluna faixa etaria nos confirmados
+# e classifica os dados por faixa etaria
+confirmados$faixa_etaria <- 'Não Informado'
+for (n in 1:nrow(confirmados))
+{
+  if (confirmados$idade[n] >= 80)
+  {confirmados$faixa_etaria[n] <- "80 anos e mais"}
+  if (confirmados$idade[n] <= 79)
+  {confirmados$faixa_etaria[n] <- "75 a 79 anos"}
+  if (confirmados$idade[n] <= 74)
+  {confirmados$faixa_etaria[n] <- "70 a 74 anos"}
+  if (confirmados$idade[n] <= 69)
+  {confirmados$faixa_etaria[n] <- "65 a 69 anos"}
+  if (confirmados$idade[n] <= 64)
+  {confirmados$faixa_etaria[n] <- "60 a 64 anos"}
+  if (confirmados$idade[n] <= 59)
+  {confirmados$faixa_etaria[n] <- "55 a 59 anos"}
+  if (confirmados$idade[n] <= 54)
+  {confirmados$faixa_etaria[n] <- "50 a 54 anos"}
+  if (confirmados$idade[n] <= 49)
+  {confirmados$faixa_etaria[n] <- "45 a 49 anos"}
+  if (confirmados$idade[n] <= 44)
+  {confirmados$faixa_etaria[n] <- "40 a 44 anos"}
+  if (confirmados$idade[n] <= 39)
+  {confirmados$faixa_etaria[n] <- "34 a 39 anos"}
+  if (confirmados$idade[n] <= 34)
+  {confirmados$faixa_etaria[n] <- "30 a 34 anos"}
+  if (confirmados$idade[n] <= 29)
+  {confirmados$faixa_etaria[n] <- "25 a 49 anos"}
+  if (confirmados$idade[n] <= 24)
+  {confirmados$faixa_etaria[n] <- "20 a 24 anos"}
+  if (confirmados$idade[n] <= 19)
+  {confirmados$faixa_etaria[n] <- "15 a 19 anos"}
+  if (confirmados$idade[n] <= 14)
+  {confirmados$faixa_etaria[n] <- "10 a 14 anos"}
+  if (confirmados$idade[n] <= 9)
+  {confirmados$faixa_etaria[n] <- "5 a 9 anos"}
+  if (confirmados$idade[n] <= 4)
+  {confirmados$faixa_etaria[n] <- "0 a 4 anos"}
+}
+#
+# Inclui a coluna faixa etaria nas mortes
+# e classifica os dados por faixa etaria
+mortes$faixa_etaria <- 'Não Informado'
+for (n in 1:nrow(mortes))
+{
+  if (mortes$idade[n] >= 80)
+  {mortes$faixa_etaria[n] <- "80 anos e mais"}
+  if (mortes$idade[n] <= 79)
+  {mortes$faixa_etaria[n] <- "75 a 79 anos"}
+  if (mortes$idade[n] <= 74)
+  {mortes$faixa_etaria[n] <- "70 a 74 anos"}
+  if (mortes$idade[n] <= 69)
+  {mortes$faixa_etaria[n] <- "65 a 69 anos"}
+  if (mortes$idade[n] <= 64)
+  {mortes$faixa_etaria[n] <- "60 a 64 anos"}
+  if (mortes$idade[n] <= 59)
+  {mortes$faixa_etaria[n] <- "55 a 59 anos"}
+  if (mortes$idade[n] <= 54)
+  {mortes$faixa_etaria[n] <- "50 a 54 anos"}
+  if (mortes$idade[n] <= 49)
+  {mortes$faixa_etaria[n] <- "45 a 49 anos"}
+  if (mortes$idade[n] <= 44)
+  {mortes$faixa_etaria[n] <- "40 a 44 anos"}
+  if (mortes$idade[n] <= 39)
+  {mortes$faixa_etaria[n] <- "34 a 39 anos"}
+  if (mortes$idade[n] <= 34)
+  {mortes$faixa_etaria[n] <- "30 a 34 anos"}
+  if (mortes$idade[n] <= 29)
+  {mortes$faixa_etaria[n] <- "25 a 49 anos"}
+  if (mortes$idade[n] <= 24)
+  {mortes$faixa_etaria[n] <- "20 a 24 anos"}
+  if (mortes$idade[n] <= 19)
+  {mortes$faixa_etaria[n] <- "15 a 19 anos"}
+  if (mortes$idade[n] <= 14)
+  {mortes$faixa_etaria[n] <- "10 a 14 anos"}
+  if (mortes$idade[n] <= 9)
+  {mortes$faixa_etaria[n] <- "5 a 9 anos"}
+  if (mortes$idade[n] <= 4)
+  {mortes$faixa_etaria[n] <- "0 a 4 anos"}
+}
+
 # ordena boletins por data decrescente
 # boletins <- boletins[order(data),]
 
