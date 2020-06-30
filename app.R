@@ -218,8 +218,8 @@ ui = dashboardPage(
                      p("Próximos 10 dias",style = "font-style:italic"), 
                      plotlyOutput("predicao10dias")
             ),
-            tabPanel("Imunização da População",
-                     p("Dias para Imunização de X% da população)",style = "font-style:italic"), 
+            tabPanel("Contágio da População",
+                     p("Expectativa de dias para contágio de X % da população)",style = "font-style:italic"), 
                      plotlyOutput("predicao_rebanho")
             )
           )
@@ -535,8 +535,8 @@ server = function(input, output) {
   }) 
 
   ################################################
-  # Predicao Imunizacao de X% da população
-  # Grafico - Linhas - Predicao Imunizacao da População
+  # Predicao Expectativa de dias para contágio de X % da população.
+  # Grafico - Linhas - Predicao Contágio da População
   ################################################
   output$predicao_rebanho <- renderPlotly({
       #    rm(pLogistico)
@@ -567,7 +567,7 @@ server = function(input, output) {
       
       # Linha 
       pLogistico <- pLogistico %>% layout(
-        #title = 'Dias para contaminação de X% da população',
+        #title = 'Expectativa de dias para contágio de X % da população',
         xaxis=list(title='Quantidade de Dias'),
         yaxis=list(title='Casos',range=c(0,250000)),
         hovermode = 'compare'
