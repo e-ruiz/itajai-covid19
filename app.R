@@ -587,7 +587,30 @@ server = function(input, output) {
       backgroundColor = styleInterval(3.4, c('gray', 'yellow'))
     )
   }) 
-  output$tabelaPredicao = DT::renderDataTable(head(tblPredicao),colnames=c('Data Boletim','Confirmados Acum.','Preditos','Erro %','I.C.Inf 95%','I.C.Sup 95%'))
+  output$tabelaPredicao = DT::renderDataTable(
+      head(tblPredicao),
+      option = list(language = list(search = 'Pesquisar:',
+                                    EmptyTable= 'Nenhum registro encontrado',
+                                    info = 'Mostrando de _START_ até _END_ de _TOTAL_ registros',
+                                    infoEmpty ='Mostrando 0 até 0 de 0 registros',
+                                    infoFiltered = '(Filtrados de _MAX_ registros)',
+                                    loadingRecords = 'Carregando...',
+                                    processing = 'Processando...',
+                                    zeroRecords = 'Nenhum registro encontrado',
+                                    lengthMenu = '_MENU_ resultados por página',
+                                    paginate = list(previous = 'Anterior',
+                                                    `next` = 'Próximo',
+                                                    first = 'Primeiro',
+                                                    last = 'Último'
+                                    ) #,
+                                    # select = list(rows=list(
+                                    #        `_` = 'Selecionado %d linhas',
+                                    #        0 = 'Nenhuma linha selecionada',
+                                    #        1 = 'Selecionado 1 linha'
+                                    #  ))
+                                    
+      )),
+      colnames=c('Data Boletim','Confirmados Acum.','Preditos','Erro %','I.C.Inf 95%','I.C.Sup 95%'))
 }
 
 shinyApp(ui = ui, server = server)
