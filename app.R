@@ -28,6 +28,8 @@ source("configs.R")
 # source("helpers.R")
 source("prepara_dados.R")
 # source("mapas/bairros_itajai.R")
+source("predicao_rebanho.R")
+
 
 DATA_ULTIMO_BOLETIM = format(as.Date(max(boletins$data)), "%d/%m/%Y")
 
@@ -206,8 +208,23 @@ ui = dashboardPage(
               "Predição de casos",
               style = "width:66.666%; margin:-24px 0px 32px -24px;font-weight:bold; color:white; background-color:gray; padding:14px 32px;"), 
           ),
-          p("Próximos 10 dias", style = "font-style:italic"),
-          plotlyOutput("predicao10dias")
+#          p("Próximos 10 dias", style = "font-style:italic"),
+#          plotlyOutput("predicao10dias")
+          tabBox(
+            title = "",
+            id = "tab-predicoes", 
+            width = 12,
+            tabPanel("Próximos dias",
+                     p("Próximos 10 dias",style = "font-style:italic"), 
+                     plotlyOutput("predicao10dias")
+            ),
+            tabPanel("Imunização da População",
+                     p("Dias para Imunização de X% da população)",style = "font-style:italic"), 
+                     plotlyOutput("predicao_rebanho")
+            )
+          )
+          
+          
         ),
       ), # Painel 5
       
@@ -473,6 +490,10 @@ server = function(input, output) {
   })   
   
 
+  ################################################
+  # Predicao proximos 10 dias moelo exponencial
+  # Grafico - Linhas - Predicao proximos 10 dias
+  ################################################
   output$predicao10dias <- renderPlotly({
     ##
     # Check for tricks: https://stackoverflow.com/questions/46730394/r-set-plotly-hovermode-to-compare-data-on-hover
@@ -513,6 +534,47 @@ server = function(input, output) {
     pPredicao
   }) 
 
+  ################################################
+  # Predicao Imunizacao de X% da população
+  # Grafico - Linhas - Predicao Imunizacao da População
+  ################################################
+  output$predicao_rebanho <- renderPlotly({
+      #    rm(pLogistico)
+      # Linha Lwr, intervalo de conviança 95% inferior
+      pLogistico <- plot_ly(log.mat.pred, x = ~ id.date, y = ~upr, name = 'I.C.Sup 95%', 
+                            type = 'scatter', mode='lines',
+                            line = list(color = 'rgb(212,212,212)',dash = 'dash',width = 3))
+      
+      # Linha Pred.m, valor predito
+      pLogistico <- pLogistico %>% add_trace(x = ~ id.date, y = ~pred.m, name = 'Predito',
+                                             #fill = 'tonexty', fillcolor = 'rgba(200,200,200,0.2)',
+                                             line = list(color = 'rgb(152,152,152)', width = 4))
+      
+      
+      # Linha Upr, intervalo de confiança 95% superior
+      pLogistico <- pLogistico %>% add_trace(x = ~ id.date, y = ~lwr, name = 'I.C.Inf 95%',
+                                             #fill = 'tonexty', fillcolor = 'rgba(200,200,200,0.2)',
+                                             line = list(color = 'rgb(192,192,192'))
+      
+      pLogistico <- pLogistico %>% add_trace(x = ~ log.par$id.date, y = ~log.par$casos,
+                                             name = paste0(as.character(log.par$percentual),' %',log.par$texto,as.character(log.par$id.date),' Dias'),
+                                             #fill = 'tonexty', fillcolor = 'rgba(200,200,200,0.2)',
+                                             line = list(color = 'transparent'),
+                                             mode='markers',marker=list(color=log.par$cores), 
+                                             #marker=list(color=c('orange','yellow','green')), 
+                                             size=15
+      )
+      
+      # Linha 
+      pLogistico <- pLogistico %>% layout(
+        #title = 'Dias para contaminação de X% da população',
+        xaxis=list(title='Quantidade de Dias'),
+        yaxis=list(title='Casos',range=c(0,250000)),
+        hovermode = 'compare'
+        #legend=list(x=1,y=0.5)
+      )
+      pLogistico
+})
 
   source("predicao_confirmados.R")
   # output$predicao10dias <- renderPlotly(pPredicao)
