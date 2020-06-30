@@ -415,7 +415,8 @@ server = function(input, output) {
   # Grafico - pizza - Confirmados por genero
   ################################################
   output$confimados_genero <- renderPlotly({
-    plot_ly(count(confirmados,sexo), labels = ~sexo, values = ~n, type = 'pie',
+    plot_ly(count(confirmados,sexo), labels = ~sexo, values = ~n, 
+            type = 'pie',hole = 0.5,
       marker = list(colors = c("rgb(255, 148, 32)", "rgb(241, 113, 0)"))
     )
   })
@@ -443,7 +444,8 @@ server = function(input, output) {
     #  x=(aggregate(mortes$sexo,by=list(mortes$sexo),FUN=length))$Group.1,
     #  y=(aggregate(mortes$sexo,by=list(mortes$sexo),FUN=length))$x,
     #  name="Mortes por Gênero",type="bar")
-    plot_ly(count(mortes, sexo), labels = ~sexo, values = ~n, type = 'pie',
+    plot_ly(count(mortes, sexo), labels = ~sexo, values = ~n, 
+            type = 'pie', hole = 0.5,
       marker = list(colors = c("pink", "#d81b60"), width = 2)
     )
   })    
