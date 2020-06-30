@@ -585,7 +585,7 @@ server = function(input, output) {
       backgroundColor = styleInterval(3.4, c('gray', 'yellow'))
     )
   }) 
-  output$tabelaPredicao = DT::renderDataTable(tblPredicao)
+  output$tabelaPredicao = DT::renderDataTable(head(tblPredicao),colnames=c('Data Boletim','Confirmados Acum.','Preditos','Erro %','I.C.Inf 95%','I.C.Sup 95%'))
 }
 
 shinyApp(ui = ui, server = server)
