@@ -64,5 +64,5 @@ tblMat <- data.frame("Data" = mat.pred$date,
 tblOriginal <- data.frame("Data" = df$data,
                           "Confirmados" = df$confirmados_acumulados)
 
-tblPredicao <- merge(x = tblOriginal, y = tblMat)
+tblPredicao <- merge(x = tblOriginal, y = tblMat, by = 'Data',all.y = TRUE)
 tblPredicao$Erro.Percentual = round(abs((tblPredicao$Confirmados - tblPredicao$Preditos) / tblPredicao$Confirmados),2)

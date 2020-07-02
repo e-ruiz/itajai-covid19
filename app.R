@@ -723,12 +723,12 @@ server = function(input, output) {
   source("predicao_confirmados.R")
   # output$predicao10dias <- renderPlotly(pPredicao)
   
-  DT::renderDT({
-    datatable(iris) %>% formatStyle(
-      'Sepal.Width',
-      backgroundColor = styleInterval(3.4, c('gray', 'yellow'))
-    )
-  }) 
+  # DT::renderDT({
+  #   datatable(iris) %>% formatStyle(
+  #     'Sepal.Width',
+  #     backgroundColor = styleInterval(3.4, c('gray', 'yellow'))
+  #   )
+  # }) 
   output$tabelaPredicao = DT::renderDataTable(
       tblPredicao,
       option = list(language = list(search = 'Pesquisar:',
