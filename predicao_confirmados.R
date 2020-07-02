@@ -31,8 +31,8 @@ df$Upr <- round(confint2(mod1)[3] *
 mat.pred <- data.frame(date = seq(df$data[1],
                                   df$data[nrow(df)] + 9,
                                   1),
-                       id.date = seq(1, nrow(df) + 10, 1))
-
+                       id.date = seq(1, nrow(df) + 10, 1)
+                       )
 ####@> Predição para os próximos 10 dias...
 mat.pred$Pred.m <- round(coef(mod1)["a"] *
                            exp(coef(mod1)["b"] * mat.pred$id.date))
@@ -42,6 +42,7 @@ mat.pred$Lwr <- round(confint2(mod1)[1] *
                         exp(confint2(mod1)[2] * mat.pred$id.date))
 mat.pred$Upr <- round(confint2(mod1)[3] *
                         exp(confint2(mod1)[4] * mat.pred$id.date))
+
 
 #######################################################
 
@@ -64,7 +65,4 @@ tblOriginal <- data.frame("Data" = df$data,
                           "Confirmados" = df$confirmados_acumulados)
 
 tblPredicao <- merge(x = tblOriginal, y = tblMat)
-
 tblPredicao$Erro.Percentual = round(abs((tblPredicao$Confirmados - tblPredicao$Preditos) / tblPredicao$Confirmados),2)
-
-

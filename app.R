@@ -236,9 +236,9 @@ ui = dashboardPage(
                      plotlyOutput("confirmados_genero")),
             tabPanel("Por faixa etária", #"Gráfico de barras dos casos confirmados por faixa etária"),
                      plotlyOutput("confirmados_faixa_etaria")),
-            tabPanel("Por idade", 
-                     #"Gráfico de barras dos casos confirmados por idade"),
-                     plotlyOutput("confirmados_idade")),
+            # tabPanel("Por idade", 
+            #          #"Gráfico de barras dos casos confirmados por idade"),
+            #          plotlyOutput("confirmados_idade")),
             tabPanel("Por bairro", 
                      #"Gráfico dos casos confirmados por bairro")
                      plotlyOutput("confirmados_bairros"))
@@ -293,9 +293,9 @@ ui = dashboardPage(
             tabPanel("Por faixa etária",
                 plotlyOutput("obitos_faixa_etaria")
             ),
-            tabPanel("Por idade", 
-                plotlyOutput("obitos_idade")
-            ),
+            # tabPanel("Por idade", 
+            #     plotlyOutput("obitos_idade")
+            # ),
             tabPanel("Linha do tempo",
               plotlyOutput("obitos_evolucao")
             )
@@ -526,17 +526,17 @@ server = function(input, output) {
   })
   
 
-  ################################################
-  # Evolução dos Casos confirmados por Idade
-  # Grafico - Barras - Casos confirmados por Idade
-  ################################################
-  output$confirmados_idade <- renderPlotly({
-    pIdade <- plot_ly(count(confirmados,idade), x = ~idade, y = ~n, type = 'bar',
-      marker = list(color = COR_CONFIRMADOS)
-    )
-    pIdade <- pIdade %>% layout(xaxis=list(title='Idade'),yaxis=list(title='Casos Confirmados'))
-    # pIdade
-  })
+  # ################################################
+  # # Evolução dos Casos confirmados por Idade
+  # # Grafico - Barras - Casos confirmados por Idade
+  # ################################################
+  # output$confirmados_idade <- renderPlotly({
+  #   pIdade <- plot_ly(count(confirmados,idade), x = ~idade, y = ~n, type = 'bar',
+  #     marker = list(color = COR_CONFIRMADOS)
+  #   )
+  #   pIdade <- pIdade %>% layout(xaxis=list(title='Idade'),yaxis=list(title='Casos Confirmados'))
+  #   # pIdade
+  # })
   
 
   ################################################
@@ -602,17 +602,17 @@ server = function(input, output) {
     pObitosFaixaEtaria
    })
   
-  ################################################
-  # Evolução dos öbitos por Idade
-  # Grafico - Barras - öbitos por Idade
-  ################################################
-  output$obitos_idade <- renderPlotly({
-    pObitosIdade <- plot_ly(count(mortes,idade), x = ~idade, y = ~n, type = 'bar',
-      marker = list(color = COR_OBITOS, width = 2)
-    )
-    pObitosIdade <- pObitosIdade %>% layout(xaxis=list(title='Idade'),yaxis=list(title='Óbitos'))
-    # pObitosIdade
-  })
+  # ################################################
+  # # Evolução dos öbitos por Idade
+  # # Grafico - Barras - öbitos por Idade
+  # ################################################
+  # output$obitos_idade <- renderPlotly({
+  #   pObitosIdade <- plot_ly(count(mortes,idade), x = ~idade, y = ~n, type = 'bar',
+  #     marker = list(color = COR_OBITOS, width = 2)
+  #   )
+  #   pObitosIdade <- pObitosIdade %>% layout(xaxis=list(title='Idade'),yaxis=list(title='Óbitos'))
+  #   # pObitosIdade
+  # })
   
   
   ################################################
@@ -730,7 +730,7 @@ server = function(input, output) {
     )
   }) 
   output$tabelaPredicao = DT::renderDataTable(
-      head(tblPredicao),
+      tblPredicao,
       option = list(language = list(search = 'Pesquisar:',
                                     EmptyTable= 'Nenhum registro encontrado',
                                     info = 'Mostrando de _START_ até _END_ de _TOTAL_ registros',
