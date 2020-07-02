@@ -373,6 +373,9 @@ ui = dashboardPage(
           h2("Autores"),
           p("Dados dos autores"),
           hr(),
+          p("Marcio Fossa é Bacharel em Ciências da Computação e Pós Graduando em Big Data pela Univali. 
+            Iniciou a carreira como desenvolvedor e migrou para a área de Banco de Dados. 
+            Atualmente integra a equipe de Conhecimento,Sistemas e Integrações da Digitro Tecnologia S/A."),
           
           h2("Repositório"),
           a("https://github.com/e-ruiz/itajai-covid19", 
