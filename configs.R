@@ -2,7 +2,7 @@
 # Credentials to deploy on 
 # https://www.shinyapps.io
 #
-APP_VERSION = 'v0.3'
+APP_VERSION = 'v0.4'
 shinyapps_token = '<app_token>'
 shinyapps_secret = '<app_secret>'
 shinyapps_name = '<app_name>'
