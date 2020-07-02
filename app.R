@@ -31,32 +31,62 @@ source("prepara_dados.R")
 source("predicao_rebanho.R")
 
 
-DATA_ULTIMO_BOLETIM = format(as.Date(max(boletins$data)), "%d/%m/%Y")
+DATA_ULTIMO_BOLETIM = format(as.Date(max(boletins$data)), "%d/%b/%y")
+
+# Cores referência
+COR_ATIVOS = "#dc143c"
+COR_CONFIRMADOS = "#ff851b"
+COR_CONFIRMADOS_1 = "#ffbb55"
+COR_CURADOS = "#00a65a"
+COR_OBITOS = "#333333"
+COR_OBITOS_1 = "#999999"
+
+
+CustomHeader <- dashboardHeader(
+  title = "Itajaí | COVID-19",
+  
+  tags$li(
+    actionLink("openModalAtualizacao", 
+      label = strong(paste0("Atualizado em ", DATA_ULTIMO_BOLETIM)),
+      icon = icon("calendar-alt")
+    ),
+    class = "dropdown"
+  ),
+
+  tags$li(
+    actionLink("openModalBoletimOficial", 
+      # label = "", #strong(paste0("Atualizado em ", DATA_ULTIMO_BOLETIM, " - [ ", APP_VERSION, " ]")),
+      label = strong(paste0("Boletim oficial")),
+      icon = icon("file-alt")
+    ),
+    class = "dropdown"
+  )
+  
+  # dropdownMenu(type = "notifications",
+  #   notificationItem(
+  #     text = "5 new users today",
+  #     icon("users")
+  #   )
+  # )
+)
 
 
 ui = dashboardPage(
   skin = "green",
+  # @see https://shiny.rstudio.com/articles/css.html
   
-  dashboardHeader(
-    title = "Itajaí | COVID-19",
-    tags$li(
-      actionLink("openModal", 
-        label = strong(paste0("Boletim de ", DATA_ULTIMO_BOLETIM, " - [ ", APP_VERSION, " ]")),
-        icon = icon("file-alt")
-      ),
-      class = "dropdown"
-    )
-  ),
+  # topbar, topnav
+  CustomHeader,
 
   dashboardSidebar(
     sidebarMenu(
       menuItem("Geral", tabName = "geral", icon = icon("dashboard")),
-      menuItem("Confirmados", icon = icon("exclamation-triangle"),
+      menuItem("Confirmados", icon = icon("exclamation"),
                menuSubItem("Geral", tabName = "confirmados"),
                menuSubItem("Mapa", tabName = "confirmados-mapa")
       ),
-      menuItem("Óbitos", tabName = "obitos", icon = icon("exclamation")),
-      menuItem("Predições", icon = icon("search"),
+      menuItem("Óbitos", tabName = "obitos", icon = icon("times-circle")),
+      menuItem("Predições", icon = icon("chart-bar"),
                menuSubItem("Gráfico de predição", tabName = "predicoes"),
                menuSubItem("Tabela de predição", tabName = "predicoes-tabela")
       ),
@@ -71,37 +101,110 @@ ui = dashboardPage(
       tabItem(tabName = 'geral',
         # Boxes need to be put in a row (or column)
         fluidRow(
-          valueBox(width = 3, boletins$confirmados_acumulados[boletins$data == max(boletins$data)], "Confirmados", 
-              color = "orange", icon = icon("exclamation-triangle")),
-          valueBox(width = 3, boletins$mortes_acumuladas[boletins$data == max(boletins$data)], "Óbitos", 
-              color = "maroon", icon = icon("exclamation")),
-          valueBox(width = 3, boletins$curados[boletins$data == max(boletins$data)], "Curados", 
-              color = "green", icon = icon("thumbs-up")),
-          valueBox(width = 3, 
-                   (boletins$confirmados_acumulados[boletins$data == max(boletins$data)]
+
+          # Casos ativos
+          # CUSTOM ValueBox, default colors sucks!
+          tags$div(class="col-sm-3",
+            tags$div(class="small-box", style=paste0("background-color:", COR_ATIVOS, "; color:#fff"),
+              tags$div(class="inner",
+                h3((boletins$confirmados_acumulados[boletins$data == max(boletins$data)]
                    -boletins$mortes_acumuladas[boletins$data == max(boletins$data)]
                    -boletins$curados[boletins$data == max(boletins$data)])
-                   , "Ativos", 
-              color = "purple", icon = icon("search")),
-          
-          
-          box(
-            title = "Evolução dos casos confirmados",
-            width = 12,
-            # status = 'primary', solidHeader = TRUE,
-            # h3("Evolução dos casos confirmados no tempo"),
-            #p("Série temporal")
-            plotlyOutput("casos_evolucao", height = 180)
+                ),
+                p("Ativos")
+              ),
+              tags$div(class="icon-large",
+                tags$i(class="fa fa-exclamation-triangle")
+              )
+            )
           ),
+          
+          
+          # Casos confirmados
+          # CUSTOM ValueBox, default colors sucks!
+          tags$div(class="col-sm-3",
+            tags$div(class="small-box", style=paste0("background-color:", COR_CONFIRMADOS, "; color:#fff"),
+              tags$div(class="inner",
+                h3(boletins$confirmados_acumulados[boletins$data == max(boletins$data)]),
+                p("Confirmados")
+              ),
+              tags$div(class="icon-large",
+                tags$i(class="fa fa-exclamation")
+              )
+            )
+          ),
+          # valueBox(width = 3, boletins$confirmados_acumulados[boletins$data == max(boletins$data)], "Confirmados", 
+          #     color = "orange", icon = icon("exclamation-triangle")),
+          
+          
+          # Casos curados
+          # CUSTOM ValueBox, default colors sucks!
+          tags$div(class="col-sm-3",
+            tags$div(class="small-box", style=paste0("background-color:", COR_CURADOS,"; color:#fff"),
+              tags$div(class="inner",
+                h3((boletins$curados[boletins$data == max(boletins$data)])
+                ),
+                p("Curados")
+              ),
+              tags$div(class="icon-large",
+                tags$i(class="fa fa-hospital-o")
+              )
+            )
+          ),
+          # valueBox(width = 3, boletins$curados[boletins$data == max(boletins$data)], "Curados", 
+          #     color = "green", icon = icon("thumbs-up")),
+
+
+          # Casos de óbitos
+          # CUSTOM ValueBox, default colors sucks!
+          tags$div(class="col-sm-3",
+            tags$div(class="small-box", style=paste0("background-color:", COR_OBITOS, "; color:#fff"),
+              tags$div(class="inner",
+                h3(boletins$mortes_acumuladas[boletins$data == max(boletins$data)]),
+                p("Óbitos")
+              ),
+              tags$div(class="icon-large",
+                tags$i(class="fa fa-times-circle")
+              )
+            )
+          ),
+          # valueBox(width = 3, boletins$mortes_acumuladas[boletins$data == max(boletins$data)], "Óbitos", 
+          #     # color = "maroon", 
+          #     # style="background-color:black !important;",
+          #     icon = icon("times-circle")),
+
 
           box(
-            #title = "Novos casos por período",
-            title = "Casos ativos por período",
+            # title = "Casos ativos por período",
+            title = "",
+            span(
+              h2(tags$i(class="fa fa-search", style=paste0("color:", COR_ATIVOS,"; margin-right:16px")), 
+                (boletins$confirmados_acumulados[boletins$data == max(boletins$data)]
+                   -boletins$mortes_acumuladas[boletins$data == max(boletins$data)]
+                   -boletins$curados[boletins$data == max(boletins$data)]), 
+                span(" Ativos", style="font-weight:normal"), 
+                style=paste0("width:66.666%; margin:-24px 0px 32px -10px;font-weight:bold; padding:14px 32px;border-bottom: 1px solid ", COR_ATIVOS,";")),
+            ),
             width = 12,
             # status = 'primary', solidHeader = TRUE,
             # h3("Evolução dos casos ativos no tempo"),
             #p("Série temporal")
             plotlyOutput("casos_ativos", height = 180)
+          ),
+
+          box(
+            title = "",
+            span(
+              h2(tags$i(class="fa fa-exclamation-triangle", style=paste0("color:", COR_CONFIRMADOS,"; margin-right:16px")), 
+                boletins$confirmados_acumulados[boletins$data == max(boletins$data)], 
+                span(" Confirmados", style="font-weight:normal"), 
+                style=paste0("width:66.666%; margin:-24px 0px 32px -10px;font-weight:bold; padding:14px 32px;border-bottom: 1px solid ", COR_CONFIRMADOS,";")),
+            ),
+            width = 12,
+            # status = 'primary', solidHeader = TRUE,
+            # h3("Evolução dos casos confirmados no tempo"),
+            #p("Série temporal")
+            plotlyOutput("casos_evolucao", height = 180)
           ),
           
         )
@@ -114,10 +217,11 @@ ui = dashboardPage(
         box(
           title = "",
           span(
-            h2(tags$i(class="fa fa-exclamation-triangle", style="color:rgba(0,0,0,0.15); margin-right:16px"), 
+            h2(tags$i(class="fa fa-exclamation-triangle", style="color:rgba(0,0,0,0.18); margin-right:16px"), 
               boletins$confirmados_acumulados[boletins$data == max(boletins$data)], 
               span(" Confirmados", style="font-weight:normal"), 
-              style="width:66.666%; margin:-24px 0px 32px -24px;font-weight:bold; color:white; background-color:#ff851b; padding:14px 32px;"),
+              style=paste0("width:66.666%; margin:-24px 0px 32px -20px;font-weight:bold; color:white; background-color:", COR_CONFIRMADOS,"; padding:14px 32px; border-bottom: 4px solid ", COR_CONFIRMADOS_1,";")
+            ),
           ),
           # h3("Confirmados por bairro", style="font-weight:bold; font-size:30px; margin:32px 0 16px 0"),
           width = 12,
@@ -129,8 +233,8 @@ ui = dashboardPage(
             # height = "350px",
             tabPanel("Por gênero", 
                      #"Gráfico de barras/pizza dos casos confirmados por gênero"),
-                     plotlyOutput("confimados_genero")),
-            tabPanel("Faixa etária", #"Gráfico de barras dos casos confirmados por faixa etária"),
+                     plotlyOutput("confirmados_genero")),
+            tabPanel("Por faixa etária", #"Gráfico de barras dos casos confirmados por faixa etária"),
                      plotlyOutput("confirmados_faixa_etaria")),
             tabPanel("Por idade", 
                      #"Gráfico de barras dos casos confirmados por idade"),
@@ -149,10 +253,12 @@ ui = dashboardPage(
         box(
           title = "",
           span(
-            h2(tags$i(class="fa fa-exclamation-triangle", style="color:rgba(0,0,0,0.15); margin-right:16px"), 
+            h2(tags$i(class="fa fa-exclamation-triangle", style="color:rgba(0,0,0,0.18); margin-right:16px"), 
               boletins$confirmados_acumulados[boletins$data == max(boletins$data)], 
               span(" Confirmados", style="font-weight:normal"), 
-              style="width:66.666%; margin:-24px 0px 32px -24px;font-weight:bold; color:white; background-color:#ff851b; padding:14px 32px;"),
+              style=paste0("width:66.666%; margin:-24px 0px 32px -20px;font-weight:bold; color:white; background-color:", COR_CONFIRMADOS,"; padding:14px 32px; border-bottom: 4px solid ", COR_CONFIRMADOS_1,";")
+            
+            ),
           ),
           h3("Confirmados por bairro", style="font-weight:bold; font-size:30px; margin:32px 0 16px 0"),
           width = 12,
@@ -168,10 +274,11 @@ ui = dashboardPage(
         box(
           title = "",
           span(
-            h2(tags$i(class="fa fa-exclamation", style="color:rgba(0,0,0,0.15); margin-right:16px"), 
+            h2(tags$i(class="fa fa-exclamation", style="color:rgba(0,0,0,0.18); margin-right:16px"), 
               boletins$mortes_acumuladas[boletins$data == max(boletins$data)], 
               span(" Óbitos", style="font-weight:normal"), 
-              style="width:66.666%; margin:-24px 0px 32px -24px;font-weight:bold; color:white; background-color:#d81b60; padding:14px 32px;"), 
+              style=paste0("width:66.666%; margin:-24px 0px 32px -20px;font-weight:bold; color:white; background-color:", COR_OBITOS,"; padding:14px 32px; border-bottom:4px solid ", COR_OBITOS_1,";")
+            ), 
           ),
           width = 12,
           # background = "maroon",
@@ -180,17 +287,17 @@ ui = dashboardPage(
             title = "",
             id = "tab-obitos", 
             width = 12,
-            tabPanel("Linha do tempo",
-              plotlyOutput("obitos_evolucao")
-            ),
-            tabPanel("Por Gênero", 
+            tabPanel("Por gênero", 
                 plotlyOutput("obitos_genero")
             ),
-            tabPanel("Por Faixa Etária",
+            tabPanel("Por faixa etária",
                 plotlyOutput("obitos_faixa_etaria")
             ),
-            tabPanel("Por Idade", 
+            tabPanel("Por idade", 
                 plotlyOutput("obitos_idade")
+            ),
+            tabPanel("Linha do tempo",
+              plotlyOutput("obitos_evolucao")
             )
           )
         )
@@ -203,10 +310,10 @@ ui = dashboardPage(
           title = "",
           width = 12,
           span(
-            h2(tags$i(class = "fa fa-search", style = "color:rgba(0,0,0,0.15); margin-right:16px"), 
+            h2(tags$i(class = "fa fa-chart-bar", style = "color:rgba(0,0,0,0.18); margin-right:16px"), 
               # span("", style="font-weight:normal"), 
               "Predição de casos",
-              style = "width:66.666%; margin:-24px 0px 32px -24px;font-weight:bold; color:white; background-color:gray; padding:14px 32px;"), 
+              style = "width:66.666%; margin:-24px 0px 32px -20px;font-weight:bold; color:white; background-color:#888; padding:14px 32px; border-bottom:4px solid #bbb;"), 
           ),
 #          p("Próximos 10 dias", style = "font-style:italic"),
 #          plotlyOutput("predicao10dias")
@@ -223,8 +330,6 @@ ui = dashboardPage(
                      plotlyOutput("predicao_rebanho")
             )
           )
-          
-          
         ),
       ), # Painel 5
       
@@ -235,9 +340,9 @@ ui = dashboardPage(
           width = 12,
           title = "",
           span(
-            h2(tags$i(class = "fa fa-search", style = "color:rgba(0,0,0,0.15); margin-right:16px"), 
+            h2(tags$i(class = "fa fa-chart-bar", style = "color:rgba(0,0,0,0.18); margin-right:16px"), 
               "Predição de casos",
-              style = "width:66.666%; margin:-24px 0px 32px -24px;font-weight:bold; color:white; background-color:gray; padding:14px 32px;"), 
+              style = "width:66.666%; margin:-24px 0px 32px -20px;font-weight:bold; color:white; background-color:#888; padding:14px 32px; border-bottom:4px solid #bbb;"), 
           ),
           p("Próximos 10 dias", style = "font-style:italic"),
           DT::dataTableOutput("tabelaPredicao")
@@ -247,9 +352,13 @@ ui = dashboardPage(
       # Painel 6
       tabItem(tabName = "sobre",
         box(
-          # title = "",
+          title = "",
+          span(
+            h2(tags$i(class="fa fa-info-circle", style="color:#517; margin-right:16px"), 
+              span(" Sobre", style="font-weight:normal"), 
+              style="width:66.666%; margin:-24px 0px 32px -20px;font-weight:bold; color:white; background-color:#aaa; padding:14px 32px; border-bottom:4px solid #ccc;"), 
+          ),
           width = 12,
-          h2("Sobre"),
           p("Dados sobre a motivação, elaboração do trabalho"),
           hr(),
           
@@ -277,19 +386,49 @@ ui = dashboardPage(
 
 server = function(input, output) {
   # modal dialog com a img do boletim oficial
-  observeEvent(input$openModal, {
+  observeEvent(input$openModalBoletimOficial, {
     showModal(
       modalDialog(
         title = "",
           span(
-            h2(tags$i(class = "fa fa-file-out", style = "color:rgba(0,0,0,0.15); margin-right:16px"), 
-              "Boletim epidemiológico",
-              style = "width:66%; margin:-24px 0px 32px -24px;font-weight:bold; color:white; background-color:orange; padding:14px 32px;"), 
+            h2(tags$i(class="fa fa-file-alt", style="color:#fff; margin-right:16px"), 
+              span(" Boletim epidemiológico", style="font-weight:normal"), 
+              style=paste0("width:75%; margin:-24px 0px 32px -20px;font-weight:bold; color:white; background-color:", COR_CONFIRMADOS,"; padding:14px 32px; border-bottom: 4px solid ", COR_CONFIRMADOS_1,";")
+            ), 
           ),
         easyClose = TRUE,
         footer = NULL,
+        p("Resumo do boletim epidemioliógico oficial, para maiores detalhes acesse: ",
+          a("https://coronavirus.itajai.sc.gov.br", 
+            href="https://coronavirus.itajai.sc.gov.br", 
+            target="blank"
+          )
+        ),
         img(src="https://intranet2.itajai.sc.gov.br/public/corona-virus/imagens/output.png",
           width="360px"
+        )
+      )
+    )
+  })
+
+  # modal dialog com informações sobre atualização dos dados
+  observeEvent(input$openModalAtualizacao, {
+    showModal(
+      modalDialog(
+        title = "",
+          span(
+            h2(tags$i(class="fa fa-info-circle", style="color:#517; margin-right:16px"), 
+              span(" Atualização dos dados", style="font-weight:normal"), 
+              style="width:75%; margin:-24px 0px 32px -20px;font-weight:bold; color:white; background-color:#aaa; padding:14px 32px; border-bottom:4px solid #ccc;"), 
+          ),
+        easyClose = TRUE,
+        footer = NULL,
+        p("Os dados aqui contidos, eventualmente podem não estar sincronizados com os boletins oficiais."),
+        p("Para maiores detalhes acesse: ",
+          a("https://coronavirus.itajai.sc.gov.br", 
+            href="https://coronavirus.itajai.sc.gov.br", 
+            target="blank"
+          )
         )
       )
     )
@@ -352,7 +491,7 @@ server = function(input, output) {
 #      theme_gray(base_size = 16)
     pObitos <- plot_ly(boletins, x = ~ymd(data), y = ~mortes_acumuladas,
         type = 'scatter', mode = 'lines',
-        line = list(color = '#d81b60', width = 2)
+        line = list(color = COR_OBITOS, width = 2)
     )
     pObitos <- pObitos %>% layout(xaxis=list(title='Período'),yaxis=list(title='Óbitos'))
     # pObitos
@@ -377,7 +516,7 @@ server = function(input, output) {
     
     pEvolucao <- plot_ly(boletins,x = ~ymd(data), y = ~confirmados_acumulados,
         type = 'scatter', mode = 'lines',
-        line = list(color = "#ff851b")
+        line = list(color = COR_CONFIRMADOS)
     )
     pEvolucao <- pEvolucao %>% layout(xaxis=list(title='Período'),yaxis=list(title='Casos Confirmados'))
     # pEvolucao
@@ -390,7 +529,7 @@ server = function(input, output) {
   ################################################
   output$confirmados_idade <- renderPlotly({
     pIdade <- plot_ly(count(confirmados,idade), x = ~idade, y = ~n, type = 'bar',
-      marker = list(color = "#ff851b")
+      marker = list(color = COR_CONFIRMADOS)
     )
     pIdade <- pIdade %>% layout(xaxis=list(title='Idade'),yaxis=list(title='Casos Confirmados'))
     # pIdade
@@ -403,7 +542,7 @@ server = function(input, output) {
   ################################################
   output$confirmados_bairros <- renderPlotly({
     pBairro <- plot_ly(count(confirmados,bairro),x = ~bairro, y = ~n,type='bar',
-      marker = list(color = "#ff851b")
+      marker = list(color = COR_CONFIRMADOS)
     )
     pBairro <- pBairro %>% layout(xaxis=list(title='Bairros'),yaxis=list(title='Casos Confirmados'))
     # pBairro
@@ -414,10 +553,10 @@ server = function(input, output) {
   # Confirmados por genero
   # Grafico - pizza - Confirmados por genero
   ################################################
-  output$confimados_genero <- renderPlotly({
-    plot_ly(count(confirmados,sexo), labels = ~sexo, values = ~n, 
+  output$confirmados_genero <- renderPlotly({
+    plot_ly(count(confirmados, sexo), labels = ~sexo, values = ~n, 
             type = 'pie',hole = 0.5,
-      marker = list(colors = c("rgb(255, 148, 32)", "rgb(241, 113, 0)"))
+      marker = list(colors = c(COR_CONFIRMADOS_1, COR_CONFIRMADOS))
     )
   })
   
@@ -427,7 +566,7 @@ server = function(input, output) {
   # Grafico - barras - Confirmados por Faixa Etária
   ################################################
   output$confirmados_faixa_etaria <- renderPlotly({
-    pConfFaixaEtaria <- plot_ly(count(confirmados,faixa_etaria),x = ~faixa_etaria, y = ~n,marker = list(color = 'ff851b') ,type='bar')
+    pConfFaixaEtaria <- plot_ly(count(confirmados,faixa_etaria),x = ~faixa_etaria, y = ~n,marker = list(color = COR_CONFIRMADOS) ,type='bar')
     pConfFaixaEtaria <- pConfFaixaEtaria %>% layout(xaxis=list(title='Faixa Etária'),yaxis=list(title='Casos Confirmados'))
     pConfFaixaEtaria
     
@@ -446,7 +585,7 @@ server = function(input, output) {
     #  name="Mortes por Gênero",type="bar")
     plot_ly(count(mortes, sexo), labels = ~sexo, values = ~n, 
             type = 'pie', hole = 0.5,
-      marker = list(colors = c("pink", "#d81b60"), width = 2)
+      marker = list(colors = c(COR_OBITOS_1, COR_OBITOS), width = 2)
     )
   })    
   
@@ -455,7 +594,7 @@ server = function(input, output) {
   # Grafico - barras - Obitos por Faixa Etária
   ################################################
   output$obitos_faixa_etaria <- renderPlotly({
-    pObitosFaixaEtaria <- plot_ly(count(mortes,faixa_etaria),x = ~faixa_etaria, y = ~n,marker = list(color = 'd81b60') ,type='bar')
+    pObitosFaixaEtaria <- plot_ly(count(mortes,faixa_etaria),x = ~faixa_etaria, y = ~n,marker = list(color = COR_OBITOS) ,type='bar')
     pObitosFaixaEtaria <- pObitosFaixaEtaria %>% layout(xaxis=list(title='Faixa Etária'),yaxis=list(title='Óbitos'))
     pObitosFaixaEtaria
    })
@@ -466,7 +605,7 @@ server = function(input, output) {
   ################################################
   output$obitos_idade <- renderPlotly({
     pObitosIdade <- plot_ly(count(mortes,idade), x = ~idade, y = ~n, type = 'bar',
-      marker = list(color = '#d81b60', width = 2)
+      marker = list(color = COR_OBITOS, width = 2)
     )
     pObitosIdade <- pObitosIdade %>% layout(xaxis=list(title='Idade'),yaxis=list(title='Óbitos'))
     # pObitosIdade
@@ -485,7 +624,7 @@ server = function(input, output) {
     #plot_ly(count(mortes,sexo),labels = ~sexo,values= ~n,type='pie')
     pAtivos <- plot_ly(boletins, x = ~ymd(data), y = ~(confirmados_acumulados-mortes_acumuladas-curados),
         type = 'bar',
-        marker = list(color = "#605ca8")
+        marker = list(color = COR_ATIVOS)
     )
     pAtivos <- pAtivos %>% layout(xaxis=list(title='Período'),yaxis=list(title='Casos Ativos'))
     # pAtivos
