@@ -23,6 +23,8 @@ if(!require(ggplot2)) install.packages("ggplot2", repos = "http://cran.us.r-proj
 if(!require(plotly)) install.packages("plotly", repos = "http://cran.us.r-project.org")
 if(!require(nlstools)) install.packages("nlstools", repos = "http://cran.us.r-project.org")
 if(!require(DT)) install.packages("DT", repos = "http://cran.us.r-project.org")
+if(!require(stringr)) install.packages("stringr", repos = "http://cran.us.r-project.org")
+
 
 source("configs.R")
 # source("helpers.R")
@@ -326,7 +328,7 @@ ui = dashboardPage(
                      plotlyOutput("predicao10dias")
             ),
             tabPanel("Contágio da População",
-                     p("Expectativa de dias para contágio de X % da população)",style = "font-style:italic"), 
+                     p("Expectativa de dias para contágio de 50%, 70% e 100% da população)",style = "font-style:italic"), 
                      plotlyOutput("predicao_rebanho")
             )
           )
@@ -683,37 +685,33 @@ server = function(input, output) {
   # Grafico - Linhas - Predicao Contágio da População
   ################################################
   output$predicao_rebanho <- renderPlotly({
-      #    rm(pLogistico)
       # Linha Lwr, intervalo de conviança 95% inferior
-      pLogistico <- plot_ly(log.mat.pred, x = ~ id.date, y = ~upr, name = 'I.C.Sup 95%', 
+      pLogistico <- plot_ly(log.mat.pred, x = ~ id.date, y = ~(upr), name = 'I.C.Sup 95%', 
                             type = 'scatter', mode='lines',
                             line = list(color = 'rgb(212,212,212)',dash = 'dash',width = 3))
       
       # Linha Pred.m, valor predito
-      pLogistico <- pLogistico %>% add_trace(x = ~ id.date, y = ~pred.m, name = 'Predito',
-                                             #fill = 'tonexty', fillcolor = 'rgba(200,200,200,0.2)',
+      pLogistico <- pLogistico %>% add_trace(x = ~ id.date, y = ~(pred.m), name = 'Predito',
                                              line = list(color = 'rgb(152,152,152)', width = 4))
       
       
       # Linha Upr, intervalo de confiança 95% superior
-      pLogistico <- pLogistico %>% add_trace(x = ~ id.date, y = ~lwr, name = 'I.C.Inf 95%',
-                                             #fill = 'tonexty', fillcolor = 'rgba(200,200,200,0.2)',
+      pLogistico <- pLogistico %>% add_trace(x = ~ id.date, y = ~(lwr), name = 'I.C.Inf 95%',
                                              line = list(color = 'rgb(192,192,192'))
       
       pLogistico <- pLogistico %>% add_trace(x = ~ log.par$id.date, y = ~log.par$casos,
-                                             name = paste0(as.character(log.par$percentual),' %',log.par$texto,as.character(log.par$id.date),' Dias'),
-                                             #fill = 'tonexty', fillcolor = 'rgba(200,200,200,0.2)',
+                                             name = paste0(str_pad(as.character(log.par$percentual),3,side='left',pad=' '),' %',log.par$texto,as.character(log.par$id.date),' Dias'),
                                              line = list(color = 'transparent'),
                                              mode='markers',marker=list(color=log.par$cores), 
-                                             #marker=list(color=c('orange','yellow','green')), 
                                              size=15
       )
       
       # Linha 
       pLogistico <- pLogistico %>% layout(
         #title = 'Expectativa de dias para contágio de X % da população',
+        #plot_bgcolor='#CCCCCC',
         xaxis=list(title='Quantidade de Dias'),
-        yaxis=list(title='Casos',range=c(0,250000)),
+        yaxis=list(title='Casos',range=c(0,250000),hoverformat='.0f'),
         hovermode = 'compare'
         #legend=list(x=1,y=0.5)
       )

@@ -59,16 +59,25 @@ log.mat.pred$P <- with(log.mat.pred, round((pred.m / head(populacao, 1)) * 100, 
 log.par <- data.frame(id.date = c(which(log.mat.pred$date == as.Date(max(boletins$data)))
                                   , (which(round(log.mat.pred$P,0) == 50))[1]
                                   , (which(round(log.mat.pred$P,0) == 70))[1]
+                                  , (which(round(log.mat.pred$P,0) == 100))[1]
 ),
-texto = c(" Atual ", " ", " "),
-zero = rep(0, 3),
+texto = c(" Atual ", " ", " "," "),
+zero = rep(0, 4),
 casos = c( round(log.mat.pred$pred.m[which(log.mat.pred$date == as.Date(max(boletins$data)))],0)
            ,round(log.mat.pred$pred.m[(which(round(log.mat.pred$P,0) == 50))[1]],0)
-           ,round(log.mat.pred$pred.m[(which(round(log.mat.pred$P,0) == 70))[1]],0)                           
+           ,round(log.mat.pred$pred.m[(which(round(log.mat.pred$P,0) == 70))[1]],0)
+           ,round(log.mat.pred$pred.m[(which(round(log.mat.pred$P,0) == 100))[1]],0)
 ),
 percentual = c( round(log.mat.pred$P[which(log.mat.pred$date == as.Date(max(boletins$data)))],0)
                 ,round(log.mat.pred$P[(which(round(log.mat.pred$P,0) == 50))[1]],0)
                 ,round(log.mat.pred$P[(which(round(log.mat.pred$P,0) == 70))[1]],0)
+                ,round(log.mat.pred$P[(which(round(log.mat.pred$P,0) == 100))[1]],0)
+                
 ),
-cores = c('orange','yellow','green')
+cores = c('orange','#999900','green','#0033CC')
+# qtd_dias = c(
+#   as.numeric(log.mat.pred$date[(which(log.mat.pred$date == as.Date(max(boletins$data))))]-Sys.Date())  
+# ,as.numeric(log.mat.pred$date[(which(round(log.mat.pred$P,0) == 50))[1]]-Sys.Date())  
+# ,as.numeric(log.mat.pred$date[(which(round(log.mat.pred$P,0) == 70))[1]]-Sys.Date())  
+# )
 )
