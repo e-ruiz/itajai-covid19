@@ -847,8 +847,8 @@ server = function(input, output) {
                                   #  ))
                                   
     )),
-    colnames=c('Data Boletim','Confirmados Acum.','Preditos','Erro %','I.C.Inf 95%','I.C.Sup 95%','% Populção')
-    )
+    colnames=c('Data Boletim','Confirmados Acum.','% Populção','Preditos','Erro %','I.C.Inf 95%','I.C.Sup 95%')
+  )
   
 }
 

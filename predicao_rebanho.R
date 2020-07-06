@@ -85,13 +85,14 @@ cores = c('orange','#999900','green','#0033CC')
 
 
 #Cria a tabela de predição
-tblLogMat <- data.frame("Data" = log.mat.pred$date,
-                     "Preditos" = log.mat.pred$pred.m,
-                     "Erro.Percentual" = 0,
-                     "Mínimo" = log.mat.pred$lwr,
-                     "Máximo" = log.mat.pred$upr,
-                     "Perc_Populacao" = log.mat.pred$P
-                     )
+tblLogMat <- data.frame(
+    "Data" = log.mat.pred$date,
+    "Perc_Populacao" = log.mat.pred$P,
+    "Preditos" = round(log.mat.pred$pred.m,0),
+    "Erro.Percentual" = 0,
+    "Mínimo" = round(log.mat.pred$lwr,0),
+    "Máximo" = round(log.mat.pred$upr,0)
+)
 
 tblLogOriginal <- data.frame("Data" = logistico$data,
                           "Confirmados" = logistico$confirmados_acumulados)
