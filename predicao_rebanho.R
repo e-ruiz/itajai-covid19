@@ -82,3 +82,20 @@ cores = c('orange','#999900','green','#0033CC')
 # ,as.numeric(log.mat.pred$date[(which(round(log.mat.pred$P,0) == 70))[1]]-Sys.Date())  
 # )
 )
+
+
+#Cria a tabela de predição
+tblLogMat <- data.frame("Data" = log.mat.pred$date,
+                     "Preditos" = log.mat.pred$pred.m,
+                     "Erro.Percentual" = 0,
+                     "Mínimo" = log.mat.pred$lwr,
+                     "Máximo" = log.mat.pred$upr,
+                     "Perc_Populacao" = log.mat.pred$P
+                     )
+
+tblLogOriginal <- data.frame("Data" = logistico$data,
+                          "Confirmados" = logistico$confirmados_acumulados)
+
+tblLogPredicao <- merge(x = tblLogOriginal, y = tblLogMat, by = 'Data',all.y = TRUE)
+tblLogPredicao$Erro.Percentual = round(abs((tblLogPredicao$Confirmados - tblLogPredicao$Preditos) / tblLogPredicao$Confirmados),2)
+

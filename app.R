@@ -346,8 +346,21 @@ ui = dashboardPage(
               "Predição de casos",
               style = "width:66.666%; margin:-24px 0px 32px -20px;font-weight:bold; color:white; background-color:#888; padding:14px 32px; border-bottom:4px solid #bbb;"), 
           ),
-          p("Próximos 10 dias", style = "font-style:italic"),
-          DT::dataTableOutput("tabelaPredicao")
+          tabBox(
+            title = "",
+            id = "tab-tblPredicoes", 
+            width = 12,
+            tabPanel("Próximos dias",
+                     p("Próximos 10 dias", style = "font-style:italic"),
+                     DT::dataTableOutput("tabelaPredicao")
+            ),
+            tabPanel("Contágio da População",
+                     p("Estimativa de contágio da população em %", style = "font-style:italic"),
+                     DT::dataTableOutput("tabelaLogPredicao")
+            )
+          )          
+          
+          
         ),
       ), # Painel 5
       
@@ -778,6 +791,10 @@ server = function(input, output) {
   #     backgroundColor = styleInterval(3.4, c('gray', 'yellow'))
   #   )
   # }) 
+
+  ################################################
+  # Tabela de Predicao Próximos 10 dias
+  ################################################
   output$tabelaPredicao = DT::renderDataTable(
       tblPredicao,
       option = list(language = list(search = 'Pesquisar:',
@@ -802,6 +819,37 @@ server = function(input, output) {
                                     
       )),
       colnames=c('Data Boletim','Confirmados Acum.','Preditos','Erro %','I.C.Inf 95%','I.C.Sup 95%'))
+
+  ################################################
+  # Tabela de Predicao Expectativa de dias para contágio de X % da população.
+  ################################################
+  
+  output$tabelaLogPredicao = DT::renderDataTable(
+    tblLogPredicao,
+    option = list(language = list(search = 'Pesquisar:',
+                                  EmptyTable= 'Nenhum registro encontrado',
+                                  info = 'Mostrando de _START_ até _END_ de _TOTAL_ registros',
+                                  infoEmpty ='Mostrando 0 até 0 de 0 registros',
+                                  infoFiltered = '(Filtrados de _MAX_ registros)',
+                                  loadingRecords = 'Carregando...',
+                                  processing = 'Processando...',
+                                  zeroRecords = 'Nenhum registro encontrado',
+                                  lengthMenu = '_MENU_ resultados por página',
+                                  paginate = list(previous = 'Anterior',
+                                                  `next` = 'Próximo',
+                                                  first = 'Primeiro',
+                                                  last = 'Último'
+                                  ) #,
+                                  # select = list(rows=list(
+                                  #        `_` = 'Selecionado %d linhas',
+                                  #        0 = 'Nenhuma linha selecionada',
+                                  #        1 = 'Selecionado 1 linha'
+                                  #  ))
+                                  
+    )),
+    colnames=c('Data Boletim','Confirmados Acum.','Preditos','Erro %','I.C.Inf 95%','I.C.Sup 95%','% Populção')
+    )
+  
 }
 
 shinyApp(ui = ui, server = server)
