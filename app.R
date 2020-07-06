@@ -375,9 +375,13 @@ ui = dashboardPage(
           h2("Autores"),
           p("Dados dos autores"),
           hr(),
-          p("Marcio Fossa é Bacharel em Ciências da Computação e Pós Graduando em Big Data pela Univali. 
+          p(strong("Marcio Fossa"), " é Bacharel em Ciências da Computação e Pós Graduando em Big Data pela Univali. 
             Iniciou a carreira como desenvolvedor e migrou para a área de Banco de Dados. 
-            Atualmente integra a equipe de Conhecimento,Sistemas e Integrações da Digitro Tecnologia S/A."),
+            Atualmente integra a equipe de Conhecimento, Sistemas e Integrações da Digitro Tecnologia S/A."),
+          
+          p(strong("Eric S. Lucinger Ruiz"), " é Técnólogo em Análise e Desenvolvimento de Sistemas e Pós Graduando em Big Data pela Univali.
+            Está desde 2012 na prefeitura municipal de Itajaí-SC, tendo atuado na construção e implantação de diversos sistemas.
+            Mais recentemente com atuação incisiva em projetos de Business Intelligence (BI) e Data Science."),
           
           h2("Repositório"),
           a("https://github.com/e-ruiz/itajai-covid19", 
