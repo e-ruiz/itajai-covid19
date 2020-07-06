@@ -423,11 +423,9 @@ ui = dashboardPage(
           tags$ul(
             tags$li("Shiny - ", a("https://shiny.rstudio.com/", href="https://shiny.rstudio.com/")),
             tags$li("Shinydashboard - ", a("https://rstudio.github.io/shinydashboard/", href="https://rstudio.github.io/shinydashboard/")),
-            tags$li("Plotly - ", a("", href="")),
-            tags$li("", a("", href="")),
-            tags$li("", a("", href="")),
+            tags$li("Plotly - ", a("https://plotly.com/r/", href="https://plotly.com/r/")),
           ),
-          p("Dados sobre tecnologias aplicadas (R, Shiny, etc.) e suas licenças"),
+          # p("Dados sobre tecnologias aplicadas (R, Shiny, etc.) e suas licenças"),
           hr(),
 
 
