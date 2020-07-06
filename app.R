@@ -361,28 +361,76 @@ ui = dashboardPage(
               style="width:66.666%; margin:-24px 0px 32px -20px;font-weight:bold; color:white; background-color:#aaa; padding:14px 32px; border-bottom:4px solid #ccc;"), 
           ),
           width = 12,
-          p("Dados sobre a motivação, elaboração do trabalho"),
+          p("Este é um trabalho acadêmico desenvolvido na disciplina de Visualização de Dados, 
+            dentro do curso de Pós Graduação em Big Data da Universidade do Vale do Itajaí (Univali). 
+            Com a abordagem de PBL - Problem Based Learning - nos foi proposto 
+            escolher um tema para aplicar os conhecimentos adiquiridos nas aulas."
+            ),
+          
+          p("O tema escolhido foi: 'Boletim epidemiológico da COVID-19 do Município de Itajaí',
+            onde a proposta seria apresentar um boletim com gráficos interativos, de facil interpretação
+            das informações para toda a população, desse modo registrando um histórico da evolução da doença no município. 
+            Desse modo, complementando o boletim oficial, que é publicado diariamente em forma textual online.
+          "),
           hr(),
           
-          h2("Fontes de dados"),
-          p("Especificação dos dados, fonte, etc."),
-          hr(),
           
-          h2("Tecnologias e licenças"),
-          p("Dados sobre tecnologias aplicadas (R, Shiny, etc.) e suas licenças"),
-          hr(),
-          
-          h2("Autores"),
-          p("Dados dos autores"),
-          hr(),
-          p(strong("Marcio Fossa"), " é Bacharel em Ciências da Computação e Pós Graduando em Big Data pela Univali. 
+          h2("Alunos"),
+          p(strong("Wagner Correia"), 
+          " é professor na área de desenvolvimento de software, 
+          graduado em Sistemas de Informação e pós-graduando em Big Data, 
+          além da docência é sócio de uma agência web atuando no desenvolvimento de sistemas web e mobile. 
+          Gosta de coisas criativas e de pensar fora da caixa."),
+
+          p(strong("Marcio Fossa"), 
+            " é Bacharel em Ciências da Computação e pós-graduando em Big Data pela Univali. 
             Iniciou a carreira como desenvolvedor e migrou para a área de Banco de Dados. 
             Atualmente integra a equipe de Conhecimento, Sistemas e Integrações da Digitro Tecnologia S/A."),
           
-          p(strong("Eric S. Lucinger Ruiz"), " é Técnólogo em Análise e Desenvolvimento de Sistemas e Pós Graduando em Big Data pela Univali.
+          p(strong("Eric S. Lucinger Ruiz"), 
+            " é Técnólogo em Análise e Desenvolvimento de Sistemas e pós-graduando em Big Data pela Univali.
             Está desde 2012 na prefeitura municipal de Itajaí-SC, tendo atuado na construção e implantação de diversos sistemas.
             Mais recentemente com atuação incisiva em projetos de Business Intelligence (BI) e Data Science."),
           
+          h2("Professor"),
+          p(strong("Rodrigo Sant'Ana"), 
+            " é Graduado em Oceanografia, 
+            Mestre em Ciência e Tecnologia Ambiental, 
+            Doutorando em Ciência e Tecnologia Ambiental,
+            professor e pesquisador no Laboratório de Estudos Marinhos Aplicados da Escola do Mar, 
+            Ciência e Tecnologia na Universidade do Vale do Itajaí (Univali)."),
+          hr(),
+          
+          
+          h2("Fontes de dados"),
+          p("IBGE: ", 
+            a("https://cidades.ibge.gov.br/brasil/sc/itajai/panorama", 
+              href="https://cidades.ibge.gov.br/brasil/sc/itajai/panorama",
+              target="blank")),
+          p("Município de Itajaí: ", 
+            a("https://coronavirus.itajai.sc.gov.br/", 
+              href="https://coronavirus.itajai.sc.gov.br/",
+              target="blank")),
+          p("Município de Itajaí: ", 
+            a("https://api.itajai.sc.gov.br/covid19/boletins", 
+              href="https://api.itajai.sc.gov.br/covid19/boletins",
+              target="blank")),
+          hr(),
+          
+          
+          h2("Tecnologias"),
+          p("Aplicação desenvolvida majoritáriamente na linguagem R, com as bibliotecas:"),
+          tags$ul(
+            tags$li("Shiny - ", a("https://shiny.rstudio.com/", href="https://shiny.rstudio.com/")),
+            tags$li("Shinydashboard - ", a("https://rstudio.github.io/shinydashboard/", href="https://rstudio.github.io/shinydashboard/")),
+            tags$li("Plotly - ", a("", href="")),
+            tags$li("", a("", href="")),
+            tags$li("", a("", href="")),
+          ),
+          p("Dados sobre tecnologias aplicadas (R, Shiny, etc.) e suas licenças"),
+          hr(),
+
+
           h2("Repositório"),
           a("https://github.com/e-ruiz/itajai-covid19", 
             href="https://github.com/e-ruiz/itajai-covid19"), 
