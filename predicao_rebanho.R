@@ -4,6 +4,7 @@
 # analisar o motivo de não aceitar variável no lugar do número absoluto
 #
 
+# população estimada 2019 - IBGE
 populacao <- 219536
 
 logistico <-filter(boletins[order(boletins$data),], confirmados_acumulados > 0)
