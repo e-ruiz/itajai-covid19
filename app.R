@@ -399,6 +399,7 @@ ui = dashboardPage(
             Doutorando em Ciência e Tecnologia Ambiental,
             professor e pesquisador no Laboratório de Estudos Marinhos Aplicados da Escola do Mar, 
             Ciência e Tecnologia na Universidade do Vale do Itajaí (Univali)."),
+          p("Rodrigo também é autor dos modelos matemáticos utilizados nas análises preditivas aqui apresentadas."),
           hr(),
           
           
