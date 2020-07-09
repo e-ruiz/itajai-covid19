@@ -507,33 +507,74 @@ server = function(input, output) {
   # Casos confirmados por bairro
   # Fonte: GeoJSON API Itajaí
   # 
-  bins <- c(0, 10, 20, 50, 100, 200, Inf)
+  # cria uma lista com os valores distribuidos
+  # usado para construir o range do choropleth dinamicamente  
+  bins <- round(
+      seq(0, max(confirmados_bairro$confirmados), 
+        by = max(confirmados_bairro$confirmados) / 10)
+  )
   pal <- colorBin("YlOrRd", domain = confirmados_bairro$confirmados, bins = bins)
   
   output$map1 <- renderLeaflet({
     leaflet(confirmados_bairro) %>%
-      setView(lat = -26.95, lng = -48.7, zoom = 11) %>%
-      addProviderTiles(providers$CartoDB.Positron) %>%
-      # addTiles() %>%
-      addPolygons(
-        fillColor = ~pal(confirmados),
-        weight = 1,
-        opacity = 1,
-        color = "#444",
-        stroke = TRUE,
-        dashArray = 1, 
-        fillOpacity = .6,
-        # smoothFactor = 0.3, 
-        label = ~paste0(bairro, ": ", confirmados ),
-        highlight = highlightOptions(
-          weight = 5,
-          color = "#446",
-          dashArray = "",
-          fillOpacity = 1,
-          bringToFront = TRUE)
+    setView(lat = -26.95, lng = -48.7, zoom = 11) %>%
+    # tiles provider
+    addProviderTiles(providers$CartoDB.Positron, 
+      options = providerTileOptions(minZoom = 10, maxZoom = 14),
+      group = "Claro"
+    ) %>%
+    addProviderTiles(providers$CartoDB.DarkMatter, 
+      options = providerTileOptions(minZoom = 10, maxZoom = 14),
+      group = "Escuro"
+    ) %>%
+    # addProviderTiles(providers$OpenStreetMap.HOT, 
+    #   options = providerTileOptions(minZoom = 10, maxZoom = 14),
+    #   group = "Colorido"
+    # ) %>%
+    # addTiles() %>%
+    addPolygons(
+      fillColor = ~pal(confirmados),
+      weight = 1,
+      opacity = 1,
+      color = "#444",
+      stroke = TRUE,
+      dashArray = 1, 
+      fillOpacity = 1,
+      # smoothFactor = 0.3, 
+      label = ~paste0(bairro, ": ", confirmados ),
+      highlight = highlightOptions(
+        weight = 5,
+        color = "#446",
+        dashArray = "",
+        fillOpacity = 1,
+        bringToFront = TRUE)
+    ) %>%
+    # Layers control
+    addLayersControl(
+      # title = "Mapa base",
+      baseGroups = c("Claro", "Escuro"),
+      # overlayGroups = c("Quakes", "Outline"),
+      options = layersControlOptions(collapsed = FALSE)
+    ) %>%
+    addLegend("bottomright", pal = pal, 
+      values = ~confirmados_bairro$confirmados, 
+      opacity = 1.0,
+      title = "Casos confirmados",
+      # labFormat = labelFormat(transform = function(x) round(10^x))
+    ) %>%  
+    addScaleBar( 
+      position = "bottomleft", 
+      options = scaleBarOptions(maxWidth = 100, 
+        metric = TRUE, imperial = FALSE, 
+        updateWhenIdle = TRUE
       )
-    # addLegend(pal = pal, values = ~log10(pop), opacity = 1.0,
-    #   labFormat = labelFormat(transform = function(x) round(10^x)))
+    ) %>%
+    htmlwidgets::onRender("
+      function() {
+        $('form.leaflet-control-layers-list').prepend('<label style=\"text-align:center\">Mapas base</label>');
+      }
+    ") 
+    # addMeasure()
   })
   
   # output$map1 <- renderLeaflet({
