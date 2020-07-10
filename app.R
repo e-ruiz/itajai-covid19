@@ -328,7 +328,7 @@ ui = dashboardPage(
                      plotlyOutput("predicao10dias")
             ),
             tabPanel("Contágio da População",
-                     p("Expectativa de dias para contágio de 50%, 70% e 100% da população)",style = "font-style:italic"), 
+                     p("Expectativa de dias para contágio de 50%, 70% e 100% da população",style = "font-style:italic"), 
                      plotlyOutput("predicao_rebanho")
             )
           )
@@ -377,13 +377,13 @@ ui = dashboardPage(
           p("Este é um trabalho acadêmico desenvolvido na disciplina de Visualização de Dados, 
             dentro do curso de Pós Graduação em Big Data da Universidade do Vale do Itajaí (Univali). 
             Com a abordagem de PBL - Problem Based Learning - nos foi proposto 
-            escolher um tema para aplicar os conhecimentos adiquiridos nas aulas."
+            escolher um tema para aplicar os conhecimentos adquiridos nas aulas."
             ),
           
           p("O tema escolhido foi: 'Boletim epidemiológico da COVID-19 do Município de Itajaí',
-            onde a proposta seria apresentar um boletim com gráficos interativos, de facil interpretação
+            onde a proposta seria apresentar um boletim com gráficos interativos, de fácil interpretação
             das informações para toda a população, desse modo registrando um histórico da evolução da doença no município. 
-            Desse modo, complementando o boletim oficial, que é publicado diariamente em forma textual online.
+            E assim, complementando o boletim oficial, que é publicado diariamente em forma textual online.
           "),
           hr(),
           
@@ -402,7 +402,7 @@ ui = dashboardPage(
           
           p(strong("Eric S. Lucinger Ruiz"), 
             " é Técnólogo em Análise e Desenvolvimento de Sistemas e pós-graduando em Big Data pela Univali.
-            Está desde 2012 na prefeitura municipal de Itajaí-SC, tendo atuado na construção e implantação de diversos sistemas.
+            Funcionário público municipal desde 2012 na prefeitura de Itajaí, tendo atuado na construção e implantação de diversos sistemas.
             Mais recentemente com atuação incisiva em projetos de Business Intelligence (BI) e Data Science."),
           
           h2("Professor"),
@@ -433,7 +433,7 @@ ui = dashboardPage(
           
           
           h2("Tecnologias"),
-          p("Aplicação desenvolvida majoritáriamente na linguagem R, com as bibliotecas:"),
+          p("Aplicação desenvolvida majoritariamente na linguagem R, com as bibliotecas:"),
           tags$ul(
             tags$li("Shiny - ", a("https://shiny.rstudio.com/", href="https://shiny.rstudio.com/")),
             tags$li("Shinydashboard - ", a("https://rstudio.github.io/shinydashboard/", href="https://rstudio.github.io/shinydashboard/")),
