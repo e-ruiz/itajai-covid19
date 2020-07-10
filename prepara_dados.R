@@ -79,9 +79,9 @@ for (n in 1:nrow(confirmados))
   if (confirmados$idade[n] <= 14)
   {confirmados$faixa_etaria[n] <- "10 a 14 anos"}
   if (confirmados$idade[n] <= 9)
-  {confirmados$faixa_etaria[n] <- "5 a 9 anos"}
+  {confirmados$faixa_etaria[n] <- "05 a 09 anos"}
   if (confirmados$idade[n] <= 4)
-  {confirmados$faixa_etaria[n] <- "0 a 4 anos"}
+  {confirmados$faixa_etaria[n] <- "0 a 04 anos"}
 }
 #
 # Inclui a coluna faixa etaria nas mortes
@@ -120,9 +120,9 @@ for (n in 1:nrow(mortes))
   if (mortes$idade[n] <= 14)
   {mortes$faixa_etaria[n] <- "10 a 14 anos"}
   if (mortes$idade[n] <= 9)
-  {mortes$faixa_etaria[n] <- "5 a 9 anos"}
+  {mortes$faixa_etaria[n] <- "05 a 09 anos"}
   if (mortes$idade[n] <= 4)
-  {mortes$faixa_etaria[n] <- "0 a 4 anos"}
+  {mortes$faixa_etaria[n] <- "0 a 04 anos"}
 }
 
 # ordena boletins por data decrescente
