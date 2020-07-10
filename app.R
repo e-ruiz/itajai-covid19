@@ -74,7 +74,7 @@ CustomHeader <- dashboardHeader(
 
 
 ui = dashboardPage(
-  skin = "green",
+  skin = "black",
   # @see https://shiny.rstudio.com/articles/css.html
   
   # topbar, topnav
@@ -83,16 +83,17 @@ ui = dashboardPage(
   dashboardSidebar(
     sidebarMenu(
       menuItem("Geral", tabName = "geral", icon = icon("dashboard")),
-      menuItem("Confirmados", icon = icon("exclamation"),
-               menuSubItem("Geral", tabName = "confirmados"),
-               menuSubItem("Mapa", tabName = "confirmados-mapa")
-      ),
+      menuItem("Confirmados", tabName = "confirmados", icon = icon("exclamation")),
+      # menuItem("Confirmados", icon = icon("exclamation"),
+      #          menuSubItem("Geral", tabName = "confirmados"),
+      #          menuSubItem("Mapa", tabName = "confirmados-mapa")
+      # ),
       menuItem("Óbitos", tabName = "obitos", icon = icon("times-circle")),
       menuItem("Predições", icon = icon("chart-bar"),
                menuSubItem("Gráfico de predição", tabName = "predicoes"),
                menuSubItem("Tabela de predição", tabName = "predicoes-tabela")
       ),
-      menuItem("Sobre", tabName = "sobre", icon = icon("info"))
+      menuItem("Sobre", tabName = "sobre", icon = icon("info-circle"))
     )
   ),
   
@@ -170,6 +171,7 @@ ui = dashboardPage(
                 p("Óbitos")
               ),
               tags$div(class="icon-large",
+                style="color: rgba(0,0,0,.5)",
                 tags$i(class="fa fa-times-circle")
               )
             )
@@ -184,7 +186,7 @@ ui = dashboardPage(
             # title = "Casos ativos por período",
             title = "",
             span(
-              h2(tags$i(class="fa fa-search", style=paste0("color:", COR_ATIVOS,"; margin-right:16px")), 
+              h2(tags$i(class="fa fa-exclamation-triangle", style=paste0("color:", COR_ATIVOS,"; margin-right:16px")), 
                 (boletins$confirmados_acumulados[boletins$data == max(boletins$data)]
                    -boletins$mortes_acumuladas[boletins$data == max(boletins$data)]
                    -boletins$curados[boletins$data == max(boletins$data)]), 
@@ -247,32 +249,35 @@ ui = dashboardPage(
             #          plotlyOutput("confirmados_idade")),
             tabPanel("Por bairro", 
                      #"Gráfico dos casos confirmados por bairro")
-                     plotlyOutput("confirmados_bairros"))
+                     plotlyOutput("confirmados_bairros")),
+            tabPanel("Mapa dos bairros", 
+                    #"Mapa dos confirmados por bairro")
+                    leafletOutput("map1"))
           ),
         )
       ), # Painel 2
       
       
-      # Painel 3
-      tabItem(
-        tabName = "confirmados-mapa",
-        box(
-          title = "",
-          span(
-            h2(tags$i(class="fa fa-exclamation", style="color:rgba(0,0,0,0.18); margin-right:16px"), 
-              boletins$confirmados_acumulados[boletins$data == max(boletins$data)], 
-              span(" Confirmados", style="font-weight:normal"), 
-              style=paste0("width:66.666%; margin:-24px 0px 32px -20px;font-weight:bold; color:white; background-color:", COR_CONFIRMADOS,"; padding:14px 32px; border-bottom: 4px solid ", COR_CONFIRMADOS_1,";")
+      # # Painel 3
+      # tabItem(
+      #   tabName = "confirmados-mapa",
+      #   box(
+      #     title = "",
+      #     span(
+      #       h2(tags$i(class="fa fa-exclamation", style="color:rgba(0,0,0,0.18); margin-right:16px"), 
+      #         boletins$confirmados_acumulados[boletins$data == max(boletins$data)], 
+      #         span(" Confirmados", style="font-weight:normal"), 
+      #         style=paste0("width:66.666%; margin:-24px 0px 32px -20px;font-weight:bold; color:white; background-color:", COR_CONFIRMADOS,"; padding:14px 32px; border-bottom: 4px solid ", COR_CONFIRMADOS_1,";")
             
-            ),
-          ),
-          h3("Confirmados por bairro", style="font-weight:bold; font-size:30px; margin:32px 0 16px 0"),
-          width = 12,
-          # status = 'primary', solidHeader = TRUE,
-          # h3("Gráfico de linha"),
-          leafletOutput("map1")
-        )
-      ), # Painel 3
+      #       ),
+      #     ),
+      #     h3("Confirmados por bairro", style="font-weight:bold; font-size:30px; margin:32px 0 16px 0"),
+      #     width = 12,
+      #     # status = 'primary', solidHeader = TRUE,
+      #     # h3("Gráfico de linha"),
+      #     leafletOutput("map1")
+      #   )
+      # ), # Painel 3
       
       
       # Painel 4
@@ -280,7 +285,7 @@ ui = dashboardPage(
         box(
           title = "",
           span(
-            h2(tags$i(class="fa fa-times-circle", style="color:rgba(0,0,0,0.18); margin-right:16px"), 
+            h2(tags$i(class="fa fa-times-circle", style="color:rgba(0,0,0,0.5); margin-right:16px"), 
               boletins$mortes_acumuladas[boletins$data == max(boletins$data)], 
               span(" Óbitos", style="font-weight:normal"), 
               style=paste0("width:66.666%; margin:-24px 0px 32px -20px;font-weight:bold; color:white; background-color:", COR_OBITOS,"; padding:14px 32px; border-bottom:4px solid ", COR_OBITOS_1,";")
