@@ -831,8 +831,7 @@ server = function(input, output) {
       pLogistico <- pLogistico %>% add_trace(x = ~ log.par$id.date, y = ~log.par$casos,
                                              name = paste0(str_pad(as.character(log.par$percentual),3,side='left',pad=' '),' %',log.par$texto,as.character(log.par$id.date),' Dias'),
                                              line = list(color = 'transparent'),
-                                             mode='markers',marker=list(color=log.par$cores), 
-                                             size=15
+                                             mode='markers',marker=list(color=log.par$cores, symbol=log.par$symbol,opacity=1,size=15) 
       )
       
       # Linha 

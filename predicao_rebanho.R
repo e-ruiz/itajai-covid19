@@ -75,7 +75,8 @@ percentual = c( round(log.mat.pred$P[which(log.mat.pred$date == as.Date(max(bole
                 ,round(log.mat.pred$P[(which(round(log.mat.pred$P,0) == 100))[1]],0)
                 
 ),
-cores = c('orange','#999900','green','#0033CC')
+cores = c('orange','#999900','green','#0033CC'),
+symbol= c('triangle-up','pentagon','circle','square')
 # qtd_dias = c(
 #   as.numeric(log.mat.pred$date[(which(log.mat.pred$date == as.Date(max(boletins$data))))]-Sys.Date())  
 # ,as.numeric(log.mat.pred$date[(which(round(log.mat.pred$P,0) == 50))[1]]-Sys.Date())  
