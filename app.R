@@ -126,7 +126,7 @@ ui = dashboardPage(
           # CUSTOM ValueBox, default colors sucks!
           tags$div(class="col-sm-3",
             tags$div(class="small-box", 
-                    onclick="javascript:document.querySelector(\"[href='#shiny-tab-obitos']\").click()", 
+                    onclick="javascript:document.querySelector(\"[href='#shiny-tab-confirmados']\").click()", 
                     style=paste0("cursor:pointer; background-color:", COR_CONFIRMADOS, "; color:#fff"),
               tags$div(class="inner",
                 h3(boletins$confirmados_acumulados[boletins$data == max(boletins$data)]),
@@ -201,7 +201,7 @@ ui = dashboardPage(
           box(
             title = "",
             span(
-              h2(tags$i(class="fa fa-exclamation-triangle", style=paste0("color:", COR_CONFIRMADOS,"; margin-right:16px")), 
+              h2(tags$i(class="fa fa-exclamation", style=paste0("color:", COR_CONFIRMADOS,"; margin-right:16px")), 
                 boletins$confirmados_acumulados[boletins$data == max(boletins$data)], 
                 span(" Confirmados", style="font-weight:normal"), 
                 style=paste0("width:66.666%; margin:-24px 0px 32px -10px;font-weight:bold; padding:14px 32px;border-bottom: 1px solid ", COR_CONFIRMADOS,";")),
@@ -223,7 +223,7 @@ ui = dashboardPage(
         box(
           title = "",
           span(
-            h2(tags$i(class="fa fa-exclamation-triangle", style="color:rgba(0,0,0,0.18); margin-right:16px"), 
+            h2(tags$i(class="fa fa-exclamation", style="color:rgba(0,0,0,0.18); margin-right:16px"), 
               boletins$confirmados_acumulados[boletins$data == max(boletins$data)], 
               span(" Confirmados", style="font-weight:normal"), 
               style=paste0("width:66.666%; margin:-24px 0px 32px -20px;font-weight:bold; color:white; background-color:", COR_CONFIRMADOS,"; padding:14px 32px; border-bottom: 4px solid ", COR_CONFIRMADOS_1,";")
@@ -259,7 +259,7 @@ ui = dashboardPage(
         box(
           title = "",
           span(
-            h2(tags$i(class="fa fa-exclamation-triangle", style="color:rgba(0,0,0,0.18); margin-right:16px"), 
+            h2(tags$i(class="fa fa-exclamation", style="color:rgba(0,0,0,0.18); margin-right:16px"), 
               boletins$confirmados_acumulados[boletins$data == max(boletins$data)], 
               span(" Confirmados", style="font-weight:normal"), 
               style=paste0("width:66.666%; margin:-24px 0px 32px -20px;font-weight:bold; color:white; background-color:", COR_CONFIRMADOS,"; padding:14px 32px; border-bottom: 4px solid ", COR_CONFIRMADOS_1,";")
@@ -280,7 +280,7 @@ ui = dashboardPage(
         box(
           title = "",
           span(
-            h2(tags$i(class="fa fa-exclamation", style="color:rgba(0,0,0,0.18); margin-right:16px"), 
+            h2(tags$i(class="fa fa-times-circle", style="color:rgba(0,0,0,0.18); margin-right:16px"), 
               boletins$mortes_acumuladas[boletins$data == max(boletins$data)], 
               span(" Óbitos", style="font-weight:normal"), 
               style=paste0("width:66.666%; margin:-24px 0px 32px -20px;font-weight:bold; color:white; background-color:", COR_OBITOS,"; padding:14px 32px; border-bottom:4px solid ", COR_OBITOS_1,";")
