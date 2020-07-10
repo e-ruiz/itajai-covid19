@@ -125,7 +125,9 @@ ui = dashboardPage(
           # Casos confirmados
           # CUSTOM ValueBox, default colors sucks!
           tags$div(class="col-sm-3",
-            tags$div(class="small-box", style=paste0("background-color:", COR_CONFIRMADOS, "; color:#fff"),
+            tags$div(class="small-box", 
+                    onclick="javascript:document.querySelector(\"[href='#shiny-tab-obitos']\").click()", 
+                    style=paste0("cursor:pointer; background-color:", COR_CONFIRMADOS, "; color:#fff"),
               tags$div(class="inner",
                 h3(boletins$confirmados_acumulados[boletins$data == max(boletins$data)]),
                 p("Confirmados")
@@ -160,7 +162,9 @@ ui = dashboardPage(
           # Casos de óbitos
           # CUSTOM ValueBox, default colors sucks!
           tags$div(class="col-sm-3",
-            tags$div(class="small-box", style=paste0("background-color:", COR_OBITOS, "; color:#fff"),
+            tags$div(class="small-box",
+                    onclick="javascript:document.querySelector(\"[href='#shiny-tab-obitos']\").click()", 
+                    style=paste0("cursor:pointer; background-color:", COR_OBITOS, "; color:#fff"),
               tags$div(class="inner",
                 h3(boletins$mortes_acumuladas[boletins$data == max(boletins$data)]),
                 p("Óbitos")
@@ -600,10 +604,25 @@ server = function(input, output) {
 #      scale_x_date(breaks = "10 days") +
 #      theme_gray(base_size = 16)
     pObitos <- plot_ly(boletins, x = ~ymd(data), y = ~mortes_acumuladas,
-        type = 'scatter', mode = 'lines',
+        type = 'scatter', 
+        mode = 'lines',
         line = list(color = COR_OBITOS, width = 2)
+        # hovermode = 'across'
     )
-    pObitos <- pObitos %>% layout(xaxis=list(title='Período'),yaxis=list(title='Óbitos'))
+    pObitos <- pObitos %>% layout(
+      xaxis=list(
+        title='Período'
+        # showspikes = TRUE,
+        # spikethickness = 1,
+        # spikecolor = 'red'
+      ),
+      yaxis=list(
+        title='Óbitos'
+        # showspikes = TRUE,
+        # spikethickness = 1,
+        # spikecolor = 'red'
+      )
+    )
     # pObitos
     
   })
@@ -750,7 +769,7 @@ server = function(input, output) {
     # Check for tricks: https://stackoverflow.com/questions/46730394/r-set-plotly-hovermode-to-compare-data-on-hover
     #
 
-    # Linha Lwr, intervalo de conviança 95% inferior
+    # Linha Lwr, intervalo de confiança 95% inferior
     pPredicao <- plot_ly(mat.pred, x = ~ date, y = ~Lwr, name = 'I.C.Inf 95%', 
         type = 'scatter', mode='lines',
           # config(
