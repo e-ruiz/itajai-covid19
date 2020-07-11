@@ -32,7 +32,7 @@ source("prepara_dados.R")
 # source("mapas/bairros_itajai.R")
 source("predicao_rebanho.R")
 
-
+#  OBS.: a API não entrega a hora, somente data!
 DATA_ULTIMO_BOLETIM = format(as.Date(max(boletins$data)), "%d/%b/%y")
 
 # Cores referência
@@ -82,7 +82,7 @@ ui = dashboardPage(
 
   dashboardSidebar(
     sidebarMenu(
-      menuItem("Geral", tabName = "geral", icon = icon("dashboard")),
+      menuItem("Geral", tabName = "geral", icon = icon("th-large")),
       menuItem("Confirmados", tabName = "confirmados", icon = icon("exclamation")),
       # menuItem("Confirmados", icon = icon("exclamation"),
       #          menuSubItem("Geral", tabName = "confirmados"),
@@ -90,10 +90,15 @@ ui = dashboardPage(
       # ),
       menuItem("Óbitos", tabName = "obitos", icon = icon("times-circle")),
       menuItem("Predições", icon = icon("chart-bar"),
-               menuSubItem("Gráfico de predição", tabName = "predicoes"),
-               menuSubItem("Tabela de predição", tabName = "predicoes-tabela")
+               menuSubItem("Próximos dias", tabName = "predicao-10-dias"),
+               menuSubItem("Contágio de rebanho", tabName = "predicoes-tabela")
       ),
-      menuItem("Sobre", tabName = "sobre", icon = icon("info-circle"))
+      menuItem("Sobre", tabName = "sobre", icon = icon("info-circle")),
+      menuItem("Entenda", tabName="entenda", icon = icon("info-circle")),
+      menuItem(strong(paste0("Versão ", APP_VERSION)),
+        href = paste0("https://github.com/e-ruiz/itajai-covid19/tags"),
+        icon = icon("git-square")
+      )
     )
   ),
   
@@ -316,29 +321,28 @@ ui = dashboardPage(
       
       
       # Painel 5
-      tabItem(tabName = "predicoes",
+      tabItem(tabName = "predicao-10-dias",
         box(
           title = "",
           width = 12,
           span(
-            h2(tags$i(class = "fa fa-chart-bar", style = "color:rgba(0,0,0,0.18); margin-right:16px"), 
+            h2(tags$i(class = "fa fa-chart-bar", style = "color:rgba(0,0,0,.4); margin-right:16px"), 
               # span("", style="font-weight:normal"), 
-              "Predição de casos",
+              "Predição de contágio nos próximos dias",
               style = "width:66.666%; margin:-24px 0px 32px -20px;font-weight:bold; color:white; background-color:#888; padding:14px 32px; border-bottom:4px solid #bbb;"), 
           ),
-#          p("Próximos 10 dias", style = "font-style:italic"),
-#          plotlyOutput("predicao10dias")
           tabBox(
             title = "",
-            id = "tab-predicoes", 
+            id = "tab-predicao-10-dias", 
             width = 12,
-            tabPanel("Próximos dias",
+            tabPanel("Gráfico",
                      p("Próximos 10 dias",style = "font-style:italic"), 
                      plotlyOutput("predicao10dias")
             ),
-            tabPanel("Contágio da População",
-                     p("Expectativa de dias para contágio de 50%, 70% e 100% da população",style = "font-style:italic"), 
-                     plotlyOutput("predicao_rebanho")
+            tabPanel("Tabela",
+                    p("Próximos 10 dias", style = "font-style:italic"),
+                    DT::dataTableOutput("tabelaPredicao")
+                     
             )
           )
         ),
@@ -351,27 +355,60 @@ ui = dashboardPage(
           width = 12,
           title = "",
           span(
-            h2(tags$i(class = "fa fa-chart-bar", style = "color:rgba(0,0,0,0.18); margin-right:16px"), 
-              "Predição de casos",
+            h2(tags$i(class = "fa fa-chart-bar", style = "color:rgba(0,0,0,.4); margin-right:16px"), 
+              "Predição de contágio de rebanho",
               style = "width:66.666%; margin:-24px 0px 32px -20px;font-weight:bold; color:white; background-color:#888; padding:14px 32px; border-bottom:4px solid #bbb;"), 
           ),
           tabBox(
             title = "",
             id = "tab-tblPredicoes", 
             width = 12,
-            tabPanel("Próximos dias",
-                     p("Próximos 10 dias", style = "font-style:italic"),
-                     DT::dataTableOutput("tabelaPredicao")
+            tabPanel("Gráfico", 
+                    #  DT::dataTableOutput("tabelaPredicao")
+                    p("Expectativa de dias para contágio de 50%, 70% e 100% da população",style = "font-style:italic"),  
+                    plotlyOutput("predicao_rebanho"),
+                    br(),br(),
+                    p("**Essa análise não leva em consideração os contágios assintomáticos e não reportados",style = "font-style:italic"),
             ),
-            tabPanel("Contágio da População",
+            tabPanel("Tabela",
                      p("Estimativa de contágio da população em %", style = "font-style:italic"),
                      DT::dataTableOutput("tabelaLogPredicao")
             )
-          )          
-          
-          
+          )
         ),
       ), # Painel 5
+
+
+      # Painel extra
+      tabItem(tabName="entenda",
+        box(
+          title = "",
+          span(
+            h2(tags$i(class="fa fa-info-circle", style="color:#517; margin-right:16px"), 
+              span(" Entenda", style="font-weight:normal"), 
+              style="width:66.666%; margin:-24px 0px 32px -20px;font-weight:bold; color:white; background-color:#aaa; padding:14px 32px; border-bottom:4px solid #ccc;"), 
+          ),
+          width = 12,
+          h3("ENTENDA O BOLETIM:"),
+          p("O Município de Itajaí informa que os números de casos descartados ou confirmados são repassados pelo Governo do Estado e podem alterar a qualquer momento, a medida que os resultados de exames são lançados no sistema. O Governo do Estado também pode, a qualquer momento, anunciar os números em seus canais oficiais."),
+
+          p("Por isso, orientamos para que a população aguarde a divulgação dos Boletins Epidemiológicos de Itajaí que trazem os números oficiais da cidade na hora da sua publicação. Será divulgado um boletim diário no fim de cada dia. No entanto, podem haver boletins extraordinários sempre que necessário."),
+          p("Os dados deste boletim reúnem as informações de todas as unidades de saúde do município, incluindo os Hospitais Marieta Konder Bornhausen e Pequeno Anjo."),
+          tags$ul(
+            tags$li(strong("O que são casos confirmados?"), "Total de pacientes que tiveram diagnóstico positivo no exame para coronavírus. Dado acumulativo, não são descontados os casos que já ganharam alta."),
+            tags$li(strong("O que são casos curados?"), "Casos confirmados que cumpriram o mínimo de 14 dias de isolamento e não apresentam mais sintomas."),
+            tags$li(strong("O que são casos confirmados internados?"), "Pessoas com coronavírus internadas em hospitais da cidade ou região."),
+            tags$li(strong("O que são casos ativos?"), "Pacientes com coronavírus que ainda não se recuperaram."),
+            tags$li(strong("O que são casos suspeitos?"), "Pacientes com sintomas de coronavírus que tiveram amostra coletada e aguardam resultado do exame."),
+            tags$li(strong("O que são casos descartados?"), "Pacientes que tiveram resultado negativo no exame para coronavírus."),
+            tags$li(strong("Mortes:"), "Pacientes com COVID-19 que evoluíram a óbito."),
+            tags$li(strong("Exames realizados:"), "Total de testes de coronavírus realizados em moradores do município. Dado inclui exames feitos nas redes pública e privada.")
+          ),
+          p("Acesse", a("https://itajai.sc.gov.br/coronavirus", href="https://itajai.sc.gov.br/coronavirus"), " e mantenha-se informado."),
+          p("Fonte: ", a("https://www.itajai.sc.gov.br/noticia/25439", href="https://www.itajai.sc.gov.br/noticia/25439"))
+      
+        )
+      ),
       
       # Painel 6
       tabItem(tabName = "sobre",
@@ -394,6 +431,15 @@ ui = dashboardPage(
             das informações para toda a população, desse modo registrando um histórico da evolução da doença no município. 
             E assim, complementando o boletim oficial, que é publicado diariamente em forma textual online.
           "),
+
+          p(a(
+              href="/downloads/PBL_Visualizacao_de_dados_covid19_itajai.pdf",  
+              class="button",
+              tags$i(class="fa fa-file-pdf"),
+              "Proposta inicial do trabalho"
+            )
+          ),
+          # <button class="btn"><i class="fa fa-download"></i> Download</button>
           hr(),
           
           
@@ -455,6 +501,14 @@ ui = dashboardPage(
           h2("Repositório"),
           a("https://github.com/e-ruiz/itajai-covid19", 
             href="https://github.com/e-ruiz/itajai-covid19"), 
+          
+          br(),
+          br(),
+          h3("Próximos passos"),
+          p("Acompanhe a evolução do projeto, sinta-se a vontade para contribuir!"),
+          a("https://github.com/e-ruiz/itajai-covid19",
+            href="https://github.com/e-ruiz/itajai-covid19/issues?q=is%3Aopen+is%3Aissue+label%3Aenhancement"
+          ),
           hr()
         )
       ) # Painel 6
