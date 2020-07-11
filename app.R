@@ -91,7 +91,7 @@ ui = dashboardPage(
       menuItem("Óbitos", tabName = "obitos", icon = icon("times-circle")),
       menuItem("Predições", icon = icon("chart-bar"),
                menuSubItem("Próximos dias", tabName = "predicao-10-dias"),
-               menuSubItem("Contágio de rebanho", tabName = "predicoes-tabela")
+               menuSubItem("Contágio da população", tabName = "predicoes-tabela")
       ),
       menuItem("Sobre", tabName = "sobre", icon = icon("info-circle")),
       menuItem("Entenda", tabName="entenda", icon = icon("info-circle")),
@@ -356,7 +356,7 @@ ui = dashboardPage(
           title = "",
           span(
             h2(tags$i(class = "fa fa-chart-bar", style = "color:rgba(0,0,0,.4); margin-right:16px"), 
-              "Predição de contágio de rebanho",
+              "Predição de contágio da população",
               style = "width:66.666%; margin:-24px 0px 32px -20px;font-weight:bold; color:white; background-color:#888; padding:14px 32px; border-bottom:4px solid #bbb;"), 
           ),
           tabBox(
