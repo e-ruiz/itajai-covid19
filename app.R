@@ -911,7 +911,7 @@ server = function(input, output) {
                                   #  ))
                                   
     )),
-    colnames=c('Data Boletim','Confirmados Acum.','% Populção','Preditos','Erro %','I.C.Inf 95%','I.C.Sup 95%')
+    colnames=c('Data Boletim','Confirmados Acum.','% População','Preditos','Erro %','I.C.Inf 95%','I.C.Sup 95%')
   )
   
 }
