@@ -433,7 +433,7 @@ ui = dashboardPage(
           "),
 
           p(a(
-              href="/downloads/PBL_Visualizacao_de_dados_covid19_itajai.pdf",  
+              href="/docs/PBL_memorial_descritivo.pdf",  
               class="button",
               tags$i(class="fa fa-file-pdf"),
               "Proposta inicial do trabalho"
